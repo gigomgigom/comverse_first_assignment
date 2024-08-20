@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <!DOCTYPE html>
 <html>
    <head>
@@ -16,13 +17,12 @@
         <section class="container-fluid my-5">
         	<form class="w-100 d-flex justify-content-center" action="/board/list" method="GET">
         		<div id="search_container" class="w-50 d-flex justify-content-end">
-        			<select class="form-select form-select-sm" name="pageNo" >
-        				<option value=0>전체</option>
-        				<option value=1>제목</option>
-        				<option value=2>내용</option>
-        				<option value=3>작성자</option>
+        			<select class="form-select form-select-sm" name="searchCtg">
+        				<option value="title" ${searchCtg == "title" ? "selected" : ""}>제목</option>
+        				<option value="content" ${searchCtg == "content" ? "selected" : ""}>내용</option>
+        				<option value="writer" ${searchCtg == "writer" ? "selected" : ""}>작성자</option>
         			</select>
-        			<input class="form-control form-control-sm" type="text" name="keyword">
+        			<input class="form-control form-control-sm" type="text" name="keyword" value="${keyword}">
         			<button type="submit" class="btn btn-sm btn-primary">Search</button>
         		</div>
         	</form>
@@ -41,10 +41,10 @@
         			<tbody>
         				<c:forEach var="board" items="${boardList}">
         					<tr>
-	        					<th>${board}</th>
-	        					<td><a href="/board/detail">제목입니다.</a></td>
-	        					<td>tlarlrma</td>
-	        					<td>2024.06.01</td>
+	        					<th>${board.boardNo}</th>
+	        					<td><a href="/board/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
+	        					<td>${board.boardWriter}</td>
+	        					<td><fmt:formatDate value="${board.boardDate}" type="date"/></td>
         					</tr>
         				</c:forEach>
         			</tbody>
@@ -64,11 +64,11 @@
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
 				  <ul class="pagination">
-				    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-				    <li class="page-item"><a class="page-link" href="#">1</a></li>
-				    <li class="page-item active"><a class="page-link" href="#">2</a></li>
-				    <li class="page-item"><a class="page-link" href="#">3</a></li>
-				    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="#">Previous</a></li>
+				    <c:forEach var="pageNum" items="${pager.pageArray}">
+				    	<li class="page-item ${pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/board/list?pageNo=${pageNum}">${pageNum}</a></li>
+				    </c:forEach>
+				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="#">Next</a></li>
 				  </ul>
 				</nav>
         	</div>

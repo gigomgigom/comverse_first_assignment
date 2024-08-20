@@ -15,7 +15,8 @@ public class BoardDto {
 	private String boardContent;
 	private String imgName;
 	private String imgType;
-	private Byte[] imgData;
+	private byte[] imgData;
+	private boolean boardEnabled;
 	
 	private MultipartFile battach;
 }

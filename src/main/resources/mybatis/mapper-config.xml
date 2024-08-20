@@ -8,5 +8,8 @@
 	</settings>
 	<typeAliases>
 		<typeAlias type="com.comverse.firstsubject.dto.MemberDto" alias="mem"/>
+		<typeAlias type="com.comverse.firstsubject.dto.BoardDto" alias="bo"/>
+		<typeAlias type="com.comverse.firstsubject.dto.ReplyDto" alias="rply"/>
+		<typeAlias type="com.comverse.firstsubject.dto.SearchIndex" alias="search"/>
 	</typeAliases>
 </configuration>

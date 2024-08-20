@@ -1,6 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.comverse.firstsubject.dao.BoardDao">
-
 	
+	<select id="selectTotalRows" parameterType="search">
+		select	count(*) 
+		from	board
+		where	board_enabled = 1
+			<if test='keyword != null and !keyword.equals("")'>
+				<if test='searchCtg.equals("title")'>
+					and board_title like concat('%', #{keyword}, '%')
+				</if>
+				<if test='searchCtg.equals("content")'>
+					and board_content like concat('%', #{keyword}, '%')
+				</if>
+				<if test='searchCtg.equals("writer")'>
+					and board_writer like concat('%', #{keyword}, '%')
+				</if>
+			</if>
+	</select>
+	<select id="selectBoardList" parameterType="search" resultType="bo">
+		select	board_no, board_title, board_writer, board_date
+		from	board
+		where	board_enabled = 1
+			<if test='keyword != null and !keyword.equals("")'>
+				<if test='searchCtg.equals("title")'>
+					and board_title like concat('%', #{keyword}, '%')
+				</if>
+				<if test='searchCtg.equals("content")'>
+					and board_content like concat('%', #{keyword}, '%')
+				</if>
+				<if test='searchCtg.equals("writer")'>
+					and board_writer like concat('%', #{keyword}, '%')
+				</if>
+			</if>
+		order by board_no desc
+		limit #{pager.startRowIndex}, #{pager.endRowNo}
+	</select>
+	<select id="selectBoardByBoardNo">
+		select	board_no, board_title, board_writer, board_date, board_content
+		from	board
+		where	board_no = #{boardNo} and board_enabled = 1
+	</select>
+	<select id="selectReplyListByBoardNo">
+		select		reply_no, reply_writer, reply_content, reply_date
+		from		reply
+		where		reply_board = #{boardNo} and reply_enabled = 1
+		order by 	reply_no desc;
+	</select>
+	<select id="selectBoardImgByBoardNo">
+		select	img_name, img_type, img_data
+		from	board
+		where	board_no = #{boardNo} and board_enabled = 1
+	</select>
+	<insert id="insertNewBoard" parameterType="bo">
+		insert into board
+			(
+				board_title, board_writer, board_date,
+				board_content, img_name, img_type, 
+				img_data, board_enabled
+			)
+		values
+			(
+				#{boardTitle}, #{boardWriter}, curdate(),
+				#{boardContent}, #{imgName}, #{imgType},
+				#{imgData}, #{boardEnabled}
+			)
+	</insert>
+	<update id="updateBoard" parameterType="bo">
+		update	board
+		set		board_title = #{boardTitle},
+				board_content = #{boardContent}
+				<if test='imgName != null and !imgName.equals("")'>
+					,
+					img_name = #{imgName},
+					img_type = #{imgType},
+					img_data = #{imgData}
+				</if>
+		where	board_no = #{boardNo}
+	</update>
+	<update id="updateBoardToDisable">
+		update	board
+		set		board_enabled = 0
+		where	board_no = #{boardNo}
+	</update>
+	<insert id="insertReply" parameterType="rply">
+		insert into	reply
+			(
+				reply_writer, reply_board, reply_date,
+				reply_content, reply_enabled
+			)
+		values
+			(
+				#{replyWriter}, #{replyBoard}, curdate(),
+				#{replyContent}, #{replyEnabled}
+			)
+	</insert>
+	<update id="updateReplyEnabled">
+		update	reply
+		set		reply_enabled = 0
+		where	reply_no = #{replyNo}
+	</update>
 </mapper>

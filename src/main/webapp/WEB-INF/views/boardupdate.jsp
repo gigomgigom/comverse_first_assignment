@@ -13,16 +13,17 @@
    <body>
         <%@ include file="/WEB-INF/views/common/header.jsp"%>
         <section class="container-fluid mt-5 pt-5">
-        	<form class="w-100 d-flex justify-content-center">
+        	<form class="w-100 d-flex justify-content-center" action="/board/update" method="POST" enctype="multipart/form-data">
         		<div class="w-50">
-        			<h1>게시물 작성</h1>
+        			<h1>게시물 수정</h1>
         			<hr/>
 	        		<label>제목</label>
-	        		<input id="input_title" class="form-control form-control-lg" placeholder="제목을 작성해주세요." name="boardTitle">
-        			
+	        		<input id="input_title" class="form-control form-control-lg" placeholder="제목을 작성해주세요." name="boardTitle" value="${board.boardTitle}">
         			<label>내용</label>
-        			<textarea id="input_content" class="form-control form-control-lg" placeholder="내용을 작성해주세요." name="boardContent" rows=15></textarea>
-        			<input type="file" class="form-control mt-5" accept="image/*">
+        			<textarea id="input_content" class="form-control form-control-lg" placeholder="내용을 작성해주세요." name="boardContent" rows=15>${board.boardContent}</textarea>
+        			<input type="file" class="form-control mt-5" accept="image/*" name="battach">
+        			<input type="hidden" value="${board.boardWriter}" name="boardWriter">
+        			<input type="hidden" value="${board.boardNo}" name="boardNo">
         			<div class="d-flex justify-content-end pt-5">
         				<button type="submit" class="btn btn-lg btn-primary">저장</button>
         			</div>

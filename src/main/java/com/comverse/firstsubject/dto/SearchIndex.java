@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class SearchIndex {
-	public int searchCtg;
+	public String searchCtg;
 	public String keyword;
-	public int pageNo;
+	public String pageNo;
+	public Pager pager;
 }
