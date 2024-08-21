@@ -35,5 +35,7 @@ public interface BoardDao {
 	public void insertReply(ReplyDto reply);
 	//댓글 삭제
 	public void updateReplyEnabled(int replyNo);
+	//댓글 수정
+	public void updateReply(ReplyDto reply);
 
 }

@@ -6,9 +6,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +27,7 @@ import com.comverse.firstsubject.service.BoardService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -36,15 +41,18 @@ public class BoardController {
 	//목록 조회 화면 이동
 	@GetMapping("/list")
 	public String boardList(Model model, HttpSession session, SearchIndex searchIndex) {
-		
+		log.info(searchIndex.toString());
 		//검색 조건 불러오기 / 세팅
 		if(searchIndex.getSearchCtg() == null) {
 			searchIndex.setSearchCtg((String)session.getAttribute("searchCtg"));
 		}
 		if(searchIndex.getKeyword() == null) {
 			searchIndex.setKeyword((String) session.getAttribute("keyword"));
+		} else {
+			//검색을 했을때 무조건 1page로 이동하게끔 함.
+			searchIndex.setPageNo("1");
 		}
-		if(searchIndex.getPageNo() == null) {
+		if(searchIndex.getPageNo() == null || Integer.parseInt(searchIndex.getPageNo()) < 1) {
 			searchIndex.setPageNo((String)session.getAttribute("pageNo"));
 			if(searchIndex.getPageNo() == null) {
 				searchIndex.setPageNo("1");
@@ -86,24 +94,29 @@ public class BoardController {
 	@GetMapping("/download_img")
 	public void downloadImg(HttpServletResponse rs, int boardNo) {
 		BoardDto board = boardService.getBoardImg(boardNo);
-		try {
-			rs.setContentType(board.getImgType());
-			String fileName = new String(board.getImgName().getBytes("UTF-8"), "ISO-8859-1");
-			rs.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-		} catch (UnsupportedEncodingException e) {
-			log.info(e.toString());
-		}
-		try {
-			OutputStream os = rs.getOutputStream();
-			os.write(board.getImgData());
-			os.flush();
-			os.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(board == null) {
+			log.info("No image");
+		} else {
+			try {
+				rs.setContentType(board.getImgType());
+				String fileName = new String(board.getImgName().getBytes("UTF-8"), "ISO-8859-1");
+				rs.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+			} catch (UnsupportedEncodingException e) {
+				log.info(e.toString());
+			}
+			try {
+				OutputStream os = rs.getOutputStream();
+				os.write(board.getImgData());
+				os.flush();
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	//게시글 작성 화면 이동
 	//인증받은 자만 요청할수 있게끔 해야함.
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/write")
 	public String writeBoard() {
 		return "boardwrite";
@@ -111,8 +124,16 @@ public class BoardController {
 	
 	//게시글 작성하기
 	//인증받은 자만 요청할 수 있게끔 해야함.
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/save")
-	public String saveBoard(BoardDto boardDto, Authentication auth) {
+	public String saveBoard(@Valid BoardDto boardDto, Authentication auth, BindingResult bindingResult, Model model) {
+		
+		if(bindingResult.hasErrors()) {
+			model.addAttribute("msg", "제목과 내용은 필수적인 내용입니다.");
+			model.addAttribute("url", "/");
+			return "alert";
+		}
+		
 		if(boardDto.getBattach() != null && !boardDto.getBattach().isEmpty()) {
 			MultipartFile mf = boardDto.getBattach();
 			boardDto.setImgName(mf.getOriginalFilename());
@@ -132,11 +153,14 @@ public class BoardController {
 	
 	//게시글 수정 화면 이동
 	//작성한 자만 요청할 수 있게 해야함.
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify")
 	public String modifyBoard(Authentication auth, Model model, int boardNo) {
 		BoardDto board = boardService.getBoardDetail(boardNo);
 		if(!auth.getName().equals(board.getBoardWriter())) {
-			return "redirect:/";
+			model.addAttribute("msg", "권한이 유효하지않습니다");
+			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
+			return "alert";
 		} else {
 			model.addAttribute("board", board);
 			return "boardupdate";
@@ -147,11 +171,14 @@ public class BoardController {
 	//작성한 자만 요청할 수 있게 해야함.
 	//1. 데이터베이스에서 해당 게시글의 정보를 가져와서 작성한자를 비교하기
 	//2. 게시글 수정 화면에서 넘어오는 값에 게시글의 작성자정보를 추가하여 인증객체와 비교한다.
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/update")
-	public String updateBoard(Authentication auth, BoardDto board) {
+	public String updateBoard(Model model, Authentication auth, BoardDto board) {
 		if(!board.getBoardWriter().equals(auth.getName())) {
 			//작성한자가 아니라는 알림 메세지 출력
-			return "redirect:/";
+			model.addAttribute("msg", "권한이 유효하지않습니다.");
+			model.addAttribute("url", "/");
+			return "alert";
 		} else {
 			if(board.getBattach() != null && !board.getBattach().isEmpty()) {
 				MultipartFile mf = board.getBattach();
@@ -171,16 +198,18 @@ public class BoardController {
 	
 	//게시글 삭제
 	//작성한 자만 요청할 수 있게 해야함.
+	@PreAuthorize("isAuthenticated() and (#boardWriter == principal.name)")
 	@GetMapping("/delete")
-	public String deleteBoard(Authentication auth, int boardNo, String boardWriter) {
+	public String deleteBoard(Model model, Authentication auth, int boardNo, String boardWriter) {
 		if(auth == null) {
-			//권한 부족 알림 
-			return "redirect:/board/list";
+			model.addAttribute("msg", "권한이 유효하지않습니다");
+			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
+			return "alert";
 		} else if(!auth.getName().equals(boardWriter)) {
-			//권한 부족 알림 
-			return "redirect:/board/list";
+			model.addAttribute("msg", "권한이 유효하지않습니다");
+			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
+			return "alert";
 		} else {
-			log.info("권한 유효함");
 			boardService.deleteBoard(boardNo);
 			return "redirect:/board/list";
 		}
@@ -188,11 +217,13 @@ public class BoardController {
 	
 	//댓글 작성
 	//인증된 자만 요청할 수 있게 해야함
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/write_comment")
-	public String writeComment(Authentication auth, ReplyDto reply) {
+	public String writeComment(Model model, Authentication auth, @Valid ReplyDto reply) {
 		if(auth == null) {
-			//권한 부족 알림
-			return "redirect:/board/list";
+			model.addAttribute("msg", "권한이 유효하지않습니다");
+			model.addAttribute("url", "/board/detail?boardNo="+reply.getReplyBoard());
+			return "alert";
 		}
 		reply.setReplyWriter(auth.getName());
 		reply.setReplyEnabled(true);
@@ -202,20 +233,33 @@ public class BoardController {
 	
 	//댓글 수정
 	//작성한 자만 요청할 수 있게 해야함
+	@PreAuthorize("isAuthenticated() and (#reply.getReplyWriter() == #auth.getName)")
 	@ResponseBody
 	@PostMapping("/update_comment")
-	public String updateComment(@RequestBody ReplyDto reply){
-		
-		return "/board/detail?boardNo="+reply.getReplyBoard();
+	public ResponseEntity<?> updateComment(@Valid @RequestBody ReplyDto reply, Authentication auth, Model model, BindingResult bindingResult){
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("blank data");
+		}
+		if(auth == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No auth");
+		}
+		if(!reply.getReplyWriter().equals(auth.getName())) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
+		}
+		boardService.modifyReply(reply);
+		return ResponseEntity.ok("/board/detail?boardNo="+reply.getReplyBoard());
 	}
 	
 	//댓글 삭제
 	//작성한 자만 요청할 수 있게 해야함
+	@PreAuthorize("isAuthenticated() and (#reply.getReplyWriter() == #auth.getName)")
 	@GetMapping("/remove_comment")
-	public String removeComment(Authentication auth, ReplyDto reply) {
+	public String removeComment(Model model, Authentication auth, ReplyDto reply) {
+		log.info(reply.toString());
 		if(auth == null) {
-			//권한 부족 알림
-			return "redirect:/board/list";
+			model.addAttribute("msg", "권한이 유효하지않습니다");
+			model.addAttribute("url", "/board/detail?boardNo=");
+			return "alert";
 		} else if(!auth.getName().equals(reply.getReplyWriter())) {
 			//권한 부족 알림 
 			return "redirect:/board/list";

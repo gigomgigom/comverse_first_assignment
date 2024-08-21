@@ -33,8 +33,8 @@ public class BoardService {
 		int changePageNoToInteger = Integer.parseInt(searchIndex.getPageNo());
 		Pager pager = new Pager(10, 5, totalRows, changePageNoToInteger);
 		//pager.setStartRowNo(pager.getStartRowNo() - 1);
+		log.info(pager.toString());
 		searchIndex.setPager(pager);
-		log.info(pager.getStartRowNo()+"");
 		return boardDao.selectBoardList(searchIndex);
 	}
 	
@@ -78,6 +78,10 @@ public class BoardService {
 	//댓글 삭제
 	public void removeComment(int replyNo) {
 		boardDao.updateReplyEnabled(replyNo);
+	}
+	//댓글 수
+	public void modifyReply(ReplyDto reply) {		
+		boardDao.updateReply(reply);
 	}
 
 }

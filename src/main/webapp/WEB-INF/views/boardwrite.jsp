@@ -9,11 +9,12 @@
       <link	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"></link>
 	  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   	  <script src="/resources/board/write.js"></script>
    </head>
    <body>
         <%@ include file="/WEB-INF/views/common/header.jsp"%>
         <section class="container-fluid mt-5 pt-5">
-        	<form class="w-100 d-flex justify-content-center" action="/board/save" method="POST" enctype="multipart/form-data">
+        	<form id="write-form" class="w-100 d-flex justify-content-center" action="/board/save" method="POST" enctype="multipart/form-data">
         		<div class="w-50">
         			<h1>게시물 작성</h1>
         			<hr/>

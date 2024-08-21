@@ -13,4 +13,10 @@
 			#{memberEnabled}, #{memberRole}, #{memberEmail}
 		)
 	</insert>
+	
+	<select id="selectByMemberEmail" resultType="mem">
+		select	member_email
+		from	member
+		where	member_email = #{email}
+	</select>
 </mapper>

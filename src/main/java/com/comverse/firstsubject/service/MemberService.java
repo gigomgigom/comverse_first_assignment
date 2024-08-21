@@ -26,7 +26,22 @@ public class MemberService {
 		member.setMemberPw(pe.encode(member.getMemberPw()));
 		
 		return memberDao.insertMember(member);
-		
+	}
+	
+	public boolean findAccountById(String memberId) {
+		MemberDto mem = memberDao.selectByMemberId(memberId);
+		if(mem != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean findAccountByEmail(String email) {
+		MemberDto mem = memberDao.selectByMemberEmail(email);
+		if (mem != null) {
+			return true;
+		}
+		return false;
 	}
 
 }

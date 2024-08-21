@@ -17,7 +17,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
 	public void onAuthenticationSuccess(HttpServletRequest rq, HttpServletResponse rs, Authentication auth) throws ServletException, IOException {
 		log.info("로그인 성공 : " + auth.getName());
-		setDefaultTargetUrl("/board/list");
+		setDefaultTargetUrl("/");
 		super.onAuthenticationSuccess(rq, rs, auth);
 	}
 }

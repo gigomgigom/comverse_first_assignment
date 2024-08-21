@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html>
    <head>
@@ -19,10 +20,16 @@
    				<h1 class="my-5">로그인</h1>
    				<form action="/login" method="POST">
    					<div class="d-flex flex-column">
+   						<c:if test="${error eq 'true'}">
+   							<p>
+	   							<span id="valid" class="alert alert-danger">${errorMsg}</span>
+	   						</p>
+   						</c:if>
    						<label for="input_id">아이디</label>
-   						<input id="input_id" class="form-control mb-3" type="text" name="userId">
+   						<input id="input_id" class="form-control mb-3" type="text" name="userId" required>
    						<label for="input_pw">비밀번호</label>
-						<input id="input_pw" class="form-control mb-5" type="password" name="passwd">
+   						
+						<input id="input_pw" class="form-control mb-5" type="password" name="passwd" required>
 						<button type="submit" class="btn btn-lg btn-primary mb-2">로그인 하기</button>
 						<a href="/auth/join" class="btn btn-lg btn-primary">회원가입</a>
    					</div>

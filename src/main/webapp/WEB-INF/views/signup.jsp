@@ -9,6 +9,7 @@
       <link	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"></link>
 	  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   	  <script src="/resources/auth/signup.js"></script>
    </head>
    <body>
         <section class="container-fluid">
@@ -17,15 +18,25 @@
    					<img src="https://comverse.co.kr/assets/img/logo.png" alt="comverse_logo">
    				</div>
    				<h1 class="my-5">회원가입</h1>
-   				<form action="/auth/signup" method="POST">
+   				<form id="write-form" action="/auth/signup" method="POST">
    					<div class="d-flex flex-column">
    						<label for="input_id">아이디</label>
-   						<input id="input_id" class="form-control mb-3" type="text" name="memberId">
+   						<input id="input_id" class="form-control" type="text" name="memberId" placeholder="영소문자 5~10">
+   						<p class="mb-3">
+   							<span id="id_error" class="text-danger mb-3 fs-6"></span>
+   						</p>
    						<label for="input_pw">비밀번호</label>
-						<input id="input_pw" class="form-control mb-3" type="password" name="memberPw">
+						<input id="input_pw" class="form-control" type="password" name="memberPw" placeholder="영 소대문자 8~12">
+						<p class="mb-3">
+   							<span id="pw_error" class="text-danger mb-3 fs-6"></span>
+   						</p>
 						<label for="input_email">E-mail</label>
-						<input id="input_email" class="form-control mb-5" type="email" name="memberEmail">
+						<input id="input_email" class="form-control" type="email" name="memberEmail" novalidate>
+						<p class="mb-5">
+   							<span id="email_error" class="text-danger fs-6"></span>
+   						</p>
 						<button type="submit" class="btn btn-lg btn-primary mb-2">회원가입</button>
+						<a href="/auth/login" class="btn btn-lg btn-primary mb-2">로그인하러가기</a>
    					</div>
 				</form>
    			</div>

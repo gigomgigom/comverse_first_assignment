@@ -64,11 +64,11 @@
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
 				  <ul class="pagination">
-				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="#">Previous</a></li>
+				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.startPageNo - 1}">Previous</a></li>
 				    <c:forEach var="pageNum" items="${pager.pageArray}">
 				    	<li class="page-item ${pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/board/list?pageNo=${pageNum}">${pageNum}</a></li>
 				    </c:forEach>
-				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="#">Next</a></li>
+				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.endPageNo + 1}">Next</a></li>
 				  </ul>
 				</nav>
         	</div>

@@ -31,8 +31,14 @@
         					</textarea>
         				</div>
         				<div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center">
-        					<img src="/board/download_img?boardNo=${board.boardNo}" width="100%">
+        					<c:if test="${board.imgName != null }">
+        						<img src="/board/download_img?boardNo=${board.boardNo}" width="100%">
+        					</c:if>
+        					<c:if test="${board.imgName == null}">
+        						<h4>첨부된 이미지파일이 없습니다.</h4>
+        					</c:if>
         				</div>
+        				
         			</div>
         			<c:if test='${board.boardWriter == id}'>
         				<div class="d-flex justify-content-end pt-5">
@@ -50,8 +56,8 @@
         				<div class="text-white">
 	        				<h1>댓글 작성</h1>
 	        			</div>
-	        			<form action="/board/write_comment" method="POST">
-	        				<textarea class="form-control form-control-lg" rows=5 name="replyContent"></textarea>
+	        			<form id="comment-form" action="/board/write_comment" method="POST">
+	        				<textarea id="comment-input" class="form-control form-control-lg" rows=5 name="replyContent"></textarea>
 	        				<input type="hidden" value="${board.boardNo}" name="replyBoard">
 	        				<div class="d-flex justify-content-end">
 	        					<button type="submit" class="btn btn-lg btn-warning mt-3">저장</button>

@@ -11,4 +11,6 @@ public interface MemberDao {
 
 	public int insertMember(MemberDto member);
 
+	public MemberDto selectByMemberEmail(String email);
+
 }
