@@ -41,7 +41,6 @@ public class BoardController {
 	//목록 조회 화면 이동
 	@GetMapping("/list")
 	public String boardList(Model model, HttpSession session, SearchIndex searchIndex) {
-		log.info(searchIndex.toString());
 		//검색 조건 불러오기 / 세팅
 		if(searchIndex.getSearchCtg() == null) {
 			searchIndex.setSearchCtg((String)session.getAttribute("searchCtg"));
@@ -198,7 +197,7 @@ public class BoardController {
 	
 	//게시글 삭제
 	//작성한 자만 요청할 수 있게 해야함.
-	@PreAuthorize("isAuthenticated() and (#boardWriter == principal.name)")
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/delete")
 	public String deleteBoard(Model model, Authentication auth, int boardNo, String boardWriter) {
 		if(auth == null) {

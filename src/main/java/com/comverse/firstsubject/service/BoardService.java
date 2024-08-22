@@ -33,7 +33,6 @@ public class BoardService {
 		int changePageNoToInteger = Integer.parseInt(searchIndex.getPageNo());
 		Pager pager = new Pager(10, 5, totalRows, changePageNoToInteger);
 		//pager.setStartRowNo(pager.getStartRowNo() - 1);
-		log.info(pager.toString());
 		searchIndex.setPager(pager);
 		return boardDao.selectBoardList(searchIndex);
 	}

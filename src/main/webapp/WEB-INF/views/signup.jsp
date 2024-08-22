@@ -22,7 +22,9 @@
    					<div class="d-flex flex-column">
    						<label for="input_id">아이디</label>
    						<input id="input_id" class="form-control" type="text" name="memberId" placeholder="영소문자 5~10">
+   						<button id="id-check" type="button" class="btn btn-sm">아이디 중복 체크(필수)</button>
    						<p class="mb-3">
+   							<span id="id_ok" class="text-success fs-6"></span>
    							<span id="id_error" class="text-danger mb-3 fs-6"></span>
    						</p>
    						<label for="input_pw">비밀번호</label>
@@ -35,7 +37,7 @@
 						<p class="mb-5">
    							<span id="email_error" class="text-danger fs-6"></span>
    						</p>
-						<button type="submit" class="btn btn-lg btn-primary mb-2">회원가입</button>
+						<button type="submit" id="submit-form" class="btn btn-lg btn-primary mb-2 disabled">회원가입</button>
 						<a href="/auth/login" class="btn btn-lg btn-primary mb-2">로그인하러가기</a>
    					</div>
 				</form>
