@@ -27,7 +27,13 @@
         		</div>
         	</form>
         </section>
-        <section>
+        <c:if test="${pager.totalRows < 1}">
+			<div class="container-fluid d-flex justify-content-center" style="height: 50vh;">
+				<h3>검색결과가 없습니다.</h3>
+			</div>        
+        </c:if>
+        <c:if test="${pager.totalRows > 0}">
+        <section style="min-height: 60vh">
         	<div id="list_container" class="container-fluid d-flex justify-content-center">
         		<table class="table w-50">
         			<thead>
@@ -51,6 +57,7 @@
         		</table>
         	</div>
         </section>
+        </c:if>
         <section>
         	<div id="write_button_container" class="container-fluid d-flex justify-content-center">
         		<div class="w-50 d-flex justify-content-end" style="min-height: 30px;">
@@ -60,6 +67,7 @@
         		</div>
         	</div>
         </section>
+        <c:if test="${pager.totalRows > 0}">
         <section>
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
@@ -73,5 +81,6 @@
 				</nav>
         	</div>
         </section>
+        </c:if>
     </body>
 </html>

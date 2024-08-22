@@ -18,7 +18,7 @@
    					<img src="https://comverse.co.kr/assets/img/logo.png" alt="comverse_logo">
    				</div>
    				<h1 class="my-5">회원가입</h1>
-   				<form id="write-form" action="/auth/signup" method="POST">
+   				<form id="write-form" action="/auth/signup" method="POST" novalidate>
    					<div class="d-flex flex-column">
    						<label for="input_id">아이디</label>
    						<input id="input_id" class="form-control" type="text" name="memberId" placeholder="영소문자 5~10">
@@ -28,12 +28,14 @@
    							<span id="id_error" class="text-danger mb-3 fs-6"></span>
    						</p>
    						<label for="input_pw">비밀번호</label>
-						<input id="input_pw" class="form-control" type="password" name="memberPw" placeholder="영 소대문자 8~12">
+						<input id="input_pw" class="form-control mb-3" type="password" name="memberPw" placeholder="영 소대문자 8~12">
+						<label for="rewrite_pw">비밀번호 확인</label>
+						<input id="rewrite_pw" class="form-control" type="password" placeholder="비밀번호 재입력">
 						<p class="mb-3">
    							<span id="pw_error" class="text-danger mb-3 fs-6"></span>
    						</p>
 						<label for="input_email">E-mail</label>
-						<input id="input_email" class="form-control" type="email" name="memberEmail" novalidate>
+						<input id="input_email" class="form-control" type="email" name="memberEmail">
 						<p class="mb-5">
    							<span id="email_error" class="text-danger fs-6"></span>
    						</p>

@@ -39,6 +39,7 @@ $(document).ready(() => {
 		
 		let id = $('#input_id').val();
 		let pw = $('#input_pw').val();
+		let rewritePw = $('#rewrite_pw').val();
 		let email = $('#input_email').val();
 		
 		let idError = $('#id_error');
@@ -47,8 +48,8 @@ $(document).ready(() => {
 		
 		const idPattern = /^[a-z]{5,10}$/;
 		const pwPattern = /^[a-zA-Z]{8,12}$/;
-		const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
-		
+		const emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+		//ID 유효성 검사
 		if(id === "") {
 			idError.html('아이디는 필수값입니다.');
 			isSubmitPosb = false;
@@ -58,21 +59,24 @@ $(document).ready(() => {
 		} else {
 			idError.html("");
 		}
-		
+		//PW 유효성 검사
 		if(pw === "") {
 			pwError.html('비밀번호는 필수값입니다.');
 			isSubmitPosb = false;
 		} else if(!pwPattern.test(pw)) {
 			pwError.html('유효하지 않는 형식입니다.');
 			isSubmitPosb = false;
+		} else if(pw !== rewritePw) {
+			pwError.html('재확인 비밀번호가 일치하지 않습니다.');
+			isSubmitPosb = false;
 		} else {
 			pwError.html('');
 		}
-		
+		//이메일 유효성 검사
 		if(email === "") {
 			emailError.html('이메일은 필수값입니다.');
 			isSubmitPosb = false;
-		} else if(emailPattern.test(email)) {
+		} else if(!emailPattern.test(email)) {
 			emailError.html('유효하지 않는 형식입니다.');
 			isSubmitPosb = false;
 		} else {
