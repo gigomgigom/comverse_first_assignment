@@ -105,4 +105,10 @@
 		set		reply_content = #{replyContent}
 		where	reply_no = #{replyNo}
 	</update>
+	
+	<select id="selectBoardWriterByBoNo" resultType="String">
+		select	board_writer
+		from 	board
+		where	board_no = #{boardNo} and board_enabled = 1
+	</select>
 </mapper>

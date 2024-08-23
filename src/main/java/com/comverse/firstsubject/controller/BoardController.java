@@ -173,7 +173,12 @@ public class BoardController {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/update")
 	public String updateBoard(Model model, Authentication auth, BoardDto board) {
-		if(!board.getBoardWriter().equals(auth.getName())) {
+		String boardWriter = boardService.getBoardWriterByBoNo(board.getBoardNo());
+		if(boardWriter == null) {
+			model.addAttribute("msg", "존재하지 않은 게시물입니다.");
+			model.addAttribute("url", "/");
+			return "alert";
+		} else if(!boardWriter.equals(auth.getName())) {
 			//작성한자가 아니라는 알림 메세지 출력
 			model.addAttribute("msg", "권한이 유효하지않습니다.");
 			model.addAttribute("url", "/");
@@ -200,11 +205,16 @@ public class BoardController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/delete")
 	public String deleteBoard(Model model, Authentication auth, int boardNo, String boardWriter) {
-		if(auth == null) {
+		String boWriter = boardService.getBoardWriterByBoNo(boardNo);
+		if(boWriter == null) {
+			model.addAttribute("msg", "존재하지 않은 개시글입니다.");
+			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
+			return "alert";
+		} else if(auth == null) {
 			model.addAttribute("msg", "권한이 유효하지않습니다");
 			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
 			return "alert";
-		} else if(!auth.getName().equals(boardWriter)) {
+		} else if(!auth.getName().equals(boWriter)) {
 			model.addAttribute("msg", "권한이 유효하지않습니다");
 			model.addAttribute("url", "/board/detail?boardNo="+boardNo);
 			return "alert";

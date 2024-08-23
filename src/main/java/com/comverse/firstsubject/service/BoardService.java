@@ -82,5 +82,11 @@ public class BoardService {
 	public void modifyReply(ReplyDto reply) {		
 		boardDao.updateReply(reply);
 	}
+	
+	
+	//게시글 작성자 찾
+	public String getBoardWriterByBoNo(int boardNo) {
+		return boardDao.selectBoardWriterByBoNo(boardNo);
+	}
 
 }

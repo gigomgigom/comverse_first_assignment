@@ -38,4 +38,8 @@ public interface BoardDao {
 	//댓글 수정
 	public void updateReply(ReplyDto reply);
 
+	
+	//게시글 작성자 찾기
+	public String selectBoardWriterByBoNo(int boardNo);
+
 }
