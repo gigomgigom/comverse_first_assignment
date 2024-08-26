@@ -6,7 +6,7 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>자유게시판</title>
+      <title>공지사항</title>
       <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
       <link	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"></link>
@@ -17,14 +17,14 @@
         <section class="container-fluid mb-5">
         	<div class="w-100 d-flex flex-column align-items-center">
         		<div class="w-100 d-flex justify-content-center my-5">
-        			<a class="btn btn-lg btn-secondary w-25 me-2 disabled">
+        			<a class="btn btn-lg btn-primary w-25 me-2">
         				자유게시판
         			</a>
-        			<a class="btn btn-lg btn-primary w-25">
+        			<a class="btn btn-lg btn-secondary w-25 disabled">
         				공지사항
         			</a>        			
         		</div>
-        		<h1>자유게시판</h1>
+        		<h1>공지사항</h1>
         	</div>
         </section>
         <section class="container-fluid my-5">
@@ -33,7 +33,6 @@
         			<select class="form-select form-select-sm" name="searchCtg">
         				<option value="title" ${searchCtg == "title" ? "selected" : ""}>제목</option>
         				<option value="content" ${searchCtg == "content" ? "selected" : ""}>내용</option>
-        				<option value="writer" ${searchCtg == "writer" ? "selected" : ""}>작성자</option>
         			</select>
         			<input class="form-control form-control-sm" type="text" name="keyword" value="${keyword}">
         			<button type="submit" class="btn btn-sm btn-primary">Search</button>
@@ -65,7 +64,7 @@
 	        					<td class="col-sm-4" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
 	        					<td class="col-sm-2">${board.boardWriter}</td>
 	        					<td class="col-sm-2"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
-	        					<td class="col-sm-2">${board.hitCnt}</td>
+	        					<td class="col-sm-2">110</td>
         					</tr>
         				</c:forEach>
         			</tbody>
@@ -76,7 +75,7 @@
         <section>
         	<div id="write_button_container" class="container-fluid d-flex justify-content-center">
         		<div class="w-50 d-flex justify-content-end" style="min-height: 30px;">
-        			<sec:authorize access="isAuthenticated()">
+        			<sec:authorize access="hasRole('ROLE_ADMIN')">
         				<a class="btn btn-sm btn-primary" href="/board/write">글작성하기</a>
         			</sec:authorize>
         		</div>

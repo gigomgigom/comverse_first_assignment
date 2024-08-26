@@ -49,20 +49,6 @@
         		</div>
         	</div>
         </section>
-        <section class="container-fluid mt-5 pt-5 d-flex justify-content-center">
-        	<div id="move_post_container" class="w-50 d-flex justify-content-between">
-        		<div>
-        			<a class="btn btn-lg btn-primary">
-        				이전 포스트
-        			</a>
-        		</div>
-        		<div>
-        			<a class="btn btn-lg btn-primary">
-        				다음 포스트
-        			</a>
-        		</div>
-        	</div>
-        </section>
         <section class="container-fluid bg-secondary mt-5 py-5">
         	<div id="comment_container" class="w-100 d-flex justify-content-center">
         		<div class="w-50 row d-flex justify-content-center">

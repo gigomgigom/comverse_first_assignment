@@ -84,8 +84,7 @@ public class BoardController {
 				model.addAttribute("id", "anonymous");
 			}
 		}
-		List<ReplyDto> replyList = boardService.getReplyList(boardNo);
-		model.addAttribute("replyList", replyList);
+		// invoke Service method and set Model Attribute
 		return "boarddetail";
 	}
 	
@@ -145,6 +144,7 @@ public class BoardController {
 		}
 		boardDto.setBattach(null);
 		boardDto.setBoardWriter(auth.getName());
+		boardDto.setBoardCtg(1);
 		boardDto.setBoardEnabled(true);
 		boardService.saveBoardOnDataBase(boardDto);
 		return "redirect:/board/list";
@@ -236,7 +236,7 @@ public class BoardController {
 		}
 		reply.setReplyWriter(auth.getName());
 		reply.setReplyEnabled(true);
-		boardService.writeReply(reply);
+		// invoke Service method
 		return "redirect:/board/detail?boardNo="+reply.getReplyBoard();
 	}
 	
@@ -255,7 +255,7 @@ public class BoardController {
 		if(!reply.getReplyWriter().equals(auth.getName())) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
 		}
-		boardService.modifyReply(reply);
+		// invoke Service method
 		return ResponseEntity.ok("/board/detail?boardNo="+reply.getReplyBoard());
 	}
 	
@@ -263,19 +263,8 @@ public class BoardController {
 	//작성한 자만 요청할 수 있게 해야함
 	@PreAuthorize("isAuthenticated() and (#reply.getReplyWriter() == #auth.getName)")
 	@GetMapping("/remove_comment")
-	public String removeComment(Model model, Authentication auth, ReplyDto reply) {
-		log.info(reply.toString());
-		if(auth == null) {
-			model.addAttribute("msg", "권한이 유효하지않습니다");
-			model.addAttribute("url", "/board/detail?boardNo=");
-			return "alert";
-		} else if(!auth.getName().equals(reply.getReplyWriter())) {
-			//권한 부족 알림 
-			return "redirect:/board/list";
-		} else {
-			boardService.removeComment(reply.getReplyNo());
-			return "redirect:/board/detail?boardNo="+reply.getReplyBoard();
-		}
+	public String removeComment(Model model, Authentication auth, BoardDto reply) {
+		return null;
 	}
 	
 	

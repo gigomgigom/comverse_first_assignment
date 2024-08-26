@@ -3,38 +3,83 @@
 <mapper namespace="com.comverse.firstsubject.dao.BoardDao">
 	
 	<select id="selectTotalRows" parameterType="search">
-		select	count(*) 
-		from	board
-		where	board_enabled = 1
-			<if test='keyword != null and !keyword.equals("")'>
-				<if test='searchCtg.equals("title")'>
-					and board_title like concat('%', #{keyword}, '%')
-				</if>
-				<if test='searchCtg.equals("content")'>
-					and board_content like concat('%', #{keyword}, '%')
-				</if>
-				<if test='searchCtg.equals("writer")'>
-					and board_writer like concat('%', #{keyword}, '%')
-				</if>
-			</if>
+		with recursive BoardTree as (
+			select
+					board_no,
+					pre_board
+			from	board
+			where	pre_board is null and board_ctg = 1
+					<if test='keyword != null and !keyword.equals("")'>
+						<if test='searchCtg.equals("title")'>
+							and board_title like concat('%', #{keyword}, '%')
+						</if>
+						<if test='searchCtg.equals("content")'>
+							and board_content like concat('%', #{keyword}, '%')
+						</if>
+						<if test='searchCtg.equals("writer")'>
+							and board_writer like concat('%', #{keyword}, '%')
+						</if>
+					</if>
+			
+			union all
+			
+			select
+					b.board_no,
+					b.pre_board
+			from	board b
+			join	BoardTree bt on b.pre_board = bt.board_no
+			where	board_ctg = 1
+		)
+		select	count(*)
+		from	BoardTree
 	</select>
 	<select id="selectBoardList" parameterType="search" resultType="bo">
-		select	board_no, board_title, board_writer, board_date
-		from	board
-		where	board_enabled = 1
-			<if test='keyword != null and !keyword.equals("")'>
-				<if test='searchCtg.equals("title")'>
-					and board_title like concat('%', #{keyword}, '%')
-				</if>
-				<if test='searchCtg.equals("content")'>
-					and board_content like concat('%', #{keyword}, '%')
-				</if>
-				<if test='searchCtg.equals("writer")'>
-					and board_writer like concat('%', #{keyword}, '%')
-				</if>
-			</if>
-		order by board_no desc
-		limit #{pager.startRowIndex}, #{pager.rowsPerPage}
+		with recursive BoardTree as (
+			select
+					board_no, board_title,
+					pre_board, board_writer,
+					anon_id, board_date,
+					hit_cnt, 1 as board_level,
+					cast(board_no as char(50)) as board_path,
+					board_enabled, board_date as root_date
+			from	board
+			where	pre_board is null and board_ctg = 1
+					<if test='keyword != null and !keyword.equals("")'>
+						<if test='searchCtg.equals("title")'>
+							and board_title like concat('%', #{keyword}, '%')
+						</if>
+						<if test='searchCtg.equals("content")'>
+							and board_content like concat('%', #{keyword}, '%')
+						</if>
+						<if test='searchCtg.equals("writer")'>
+							and board_writer like concat('%', #{keyword}, '%')
+						</if>
+					</if>
+			
+			
+			union all
+			
+			select
+					b.board_no, b.board_title,
+					b.pre_board, b.board_writer,
+					b.anon_id, b.board_date,
+					b.hit_cnt, bt.board_level + 1,
+					concat(bt.board_path, '-', b.board_no) as board_path,
+					b.board_enabled, bt.root_date
+			from	board b
+			join	BoardTree bt on b.pre_board = bt.board_no
+			where	board_ctg = 1
+		)
+		select
+					board_no, board_title,
+					pre_board, board_writer,
+					anon_id, board_date,
+					hit_cnt, board_level,
+					board_path, board_enabled,
+					root_date
+			from	BoardTree
+		order by	root_date desc, board_path, board_level
+		limit 		#{pager.startRowIndex}, #{pager.rowsPerPage}
 	</select>
 	<select id="selectBoardByBoardNo">
 		select	board_no, board_title, board_writer, board_date, board_content, img_name
@@ -55,15 +100,15 @@
 	<insert id="insertNewBoard" parameterType="bo">
 		insert into board
 			(
-				board_title, board_writer, board_date,
+				board_title, board_writer, board_date, board_ctg,
 				board_content, img_name, img_type, 
-				img_data, board_enabled
+				img_data, board_enabled, hit_cnt
 			)
 		values
 			(
-				#{boardTitle}, #{boardWriter}, curdate(),
+				#{boardTitle}, #{boardWriter}, curdate(), #{boardCtg},
 				#{boardContent}, #{imgName}, #{imgType},
-				#{imgData}, #{boardEnabled}
+				#{imgData}, #{boardEnabled}, 0
 			)
 	</insert>
 	<update id="updateBoard" parameterType="bo">
