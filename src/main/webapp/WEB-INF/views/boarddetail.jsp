@@ -38,7 +38,6 @@
         						<h4>첨부된 이미지파일이 없습니다.</h4>
         					</c:if>
         				</div>
-        				
         			</div>
         			<c:if test='${board.boardWriter == id}'>
         				<div class="d-flex justify-content-end pt-5">
@@ -66,18 +65,24 @@
         <section class="container-fluid bg-secondary mt-5 py-5">
         	<div id="comment_container" class="w-100 d-flex justify-content-center">
         		<div class="w-50 row d-flex justify-content-center">
-        			<c:if test='${id != "anonymous"}'>
-        				<div class="text-white">
-	        				<h1>댓글 작성</h1>
+        			<div class="text-white">
+	        			<h1>댓글 작성</h1>
+	        		</div>
+	        		<form id="comment-form" action="/board/write_comment" method="POST" enctype="multipart/form-data">
+	        			<textarea id="comment-input" class="form-control form-control-lg" rows=5 name="boardContent"></textarea>
+	        			<input type="file" class="form-control mt-2 mb-3" accept="image/*" name="battach"/>
+	        			<input type="hidden" value="${board.boardNo}" name="preBoard">
+	        			<input type="hidden" value="${'RE: '}${board.boardTitle}" name="boardTitle">
+	        			<c:if test="${id == 'anonymous'}">
+	        				<label for="anon_id" class="text-white">이름</label>
+	        				<input id="anon_id" name="anonId" type="text" class="w-25 form-control form-control-md"/>
+	        				<label for="anon_pw" class="text-white">비밀번호</label>
+	        				<input id="anon_pw" name="anonPw" type="password" class="w-25 form-control form-control-md"/>
+	        			</c:if>
+	        			<div class="d-flex justify-content-end">
+	        				<button type="submit" class="btn btn-lg btn-warning mt-3">저장</button>
 	        			</div>
-	        			<form id="comment-form" action="/board/write_comment" method="POST">
-	        				<textarea id="comment-input" class="form-control form-control-lg" rows=5 name="replyContent"></textarea>
-	        				<input type="hidden" value="${board.boardNo}" name="replyBoard">
-	        				<div class="d-flex justify-content-end">
-	        					<button type="submit" class="btn btn-lg btn-warning mt-3">저장</button>
-	        				</div>
-	        			</form>
-        			</c:if>
+	        		</form>
         			<div class="w-100 bg-white rounded py-5 mt-5">
         				<div class="ps-5">
         					<h1>댓글 목록</h1>

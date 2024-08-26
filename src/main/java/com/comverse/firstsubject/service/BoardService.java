@@ -71,7 +71,7 @@ public class BoardService {
 	}
 	//-------------------------------------------------------------
 	//댓글 작성
-	public void writeReply(ReplyDto reply) {
+	public void writeReply(BoardDto reply) {
 		boardDao.insertReply(reply);
 	}
 	//댓글 삭제

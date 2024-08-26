@@ -30,7 +30,7 @@ public class BoardDto {
 	private boolean boardEnabled;
 	private String hitCnt;
 	
-	private String boardLevel;
+	private int boardLevel;
 	private String boardPath;
 	
 	private MultipartFile battach;

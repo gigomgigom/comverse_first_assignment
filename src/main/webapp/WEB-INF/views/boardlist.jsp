@@ -48,24 +48,24 @@
         <c:if test="${pager.totalRows > 0}">
         <section style="min-height: 40vh">
         	<div id="list_container" class="container-fluid d-flex justify-content-center">
-        		<table class="table w-50">
-        			<thead>
+        		<table class="table table-bordered w-50">
+        			<thead class="table-primary">
         				<tr class="row">
-        					<th class="col-sm-2">글 번호</th>
-        					<th class="col-sm-4">제목</th>
-        					<th class="col-sm-2">작성자</th>
-        					<th class="col-sm-2">작성일</th>
-        					<th class="col-sm-2">조회수</th>
+        					<th class="col-sm-1 text-center">글 번호</th>
+        					<th class="col-sm-5 text-center">제목</th>
+        					<th class="col-sm-2 text-center">작성자</th>
+        					<th class="col-sm-2 text-center">작성일</th>
+        					<th class="col-sm-2 text-center">조회수</th>
         				</tr>
         			</thead>
         			<tbody>
         				<c:forEach var="board" items="${boardList}">
-        					<tr class="row">
-	        					<th class="col-sm-2">${board.boardNo}</th>
-	        					<td class="col-sm-4" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
-	        					<td class="col-sm-2">${board.boardWriter}</td>
-	        					<td class="col-sm-2"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
-	        					<td class="col-sm-2">${board.hitCnt}</td>
+        					<tr class="row ${board.boardLevel == 1 ? 'table-info' : ''}">
+	        					<th class="col-sm-1 text-center border-right">${board.boardNo}</th>
+	        					<td class="col-sm-5 border-right" style="padding-left: ${board.boardLevel != 1 ? board.boardLevel * 10 : 5}px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}">${board.boardLevel != 1 ? 'ㄴ' : ''}${board.boardEnabled ? board.boardTitle : '삭제 된 게시글입니다.'}</a></td>
+	        					<td class="col-sm-2 text-center border-right">${board.boardWriter != null ? board.boardWriter : board.anonId}</td>
+	        					<td class="col-sm-2 text-center border-right"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
+	        					<td class="col-sm-2 text-center">${board.hitCnt}</td>
         					</tr>
         				</c:forEach>
         			</tbody>

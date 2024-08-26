@@ -226,18 +226,28 @@ public class BoardController {
 	
 	//댓글 작성
 	//인증된 자만 요청할 수 있게 해야함
-	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/write_comment")
-	public String writeComment(Model model, Authentication auth, @Valid ReplyDto reply) {
-		if(auth == null) {
-			model.addAttribute("msg", "권한이 유효하지않습니다");
-			model.addAttribute("url", "/board/detail?boardNo="+reply.getReplyBoard());
-			return "alert";
+	public String writeComment(Model model, Authentication auth, @Valid BoardDto reply) {
+		if(reply.getBattach() != null && !reply.getBattach().isEmpty()) {
+			MultipartFile mf = reply.getBattach();
+			reply.setImgName(mf.getOriginalFilename());
+			reply.setImgType(mf.getContentType());
+			try {
+				reply.setImgData(mf.getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		reply.setReplyWriter(auth.getName());
-		reply.setReplyEnabled(true);
+		if(auth != null) {
+			reply.setBoardWriter(auth.getName());
+		} else {
+			reply.setAnonId("(비) " + reply.getAnonId());
+		}
+		reply.setBoardEnabled(true);
+		reply.setBoardCtg(1);
 		// invoke Service method
-		return "redirect:/board/detail?boardNo="+reply.getReplyBoard();
+		boardService.writeReply(reply);
+		return "redirect:/board/detail?boardNo="+reply.getPreBoard();
 	}
 	
 	//댓글 수정

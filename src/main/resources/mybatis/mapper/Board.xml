@@ -129,15 +129,33 @@
 		where	board_no = #{boardNo}
 	</update>
 	<insert id="insertReply" parameterType="rply">
-		insert into	reply
+		insert into	board
 			(
-				reply_writer, reply_board, reply_date,
-				reply_content, reply_enabled
+				board_title, board_ctg, pre_board,
+				<if test="boardWriter != null">
+					board_writer,
+				</if>
+				<if test="boardWriter == null">
+					anon_id,
+					anon_pw,
+				</if>
+				board_date, board_content,
+				img_name, img_type, img_data,
+				board_enabled, hit_cnt
 			)
 		values
 			(
-				#{replyWriter}, #{replyBoard}, curdate(),
-				#{replyContent}, #{replyEnabled}
+				#{boardTitle}, #{boardCtg}, #{preBoard},
+				<if test="boardWriter != null">
+					#{boardWriter},
+				</if>
+				<if test="boardWriter == null">
+					#{anonId},
+					#{anonPw},
+				</if>
+				curdate(), #{boardContent},
+				#{imgName}, #{imgType}, #{imgData},
+				1, 0
 			)
 	</insert>
 	<update id="updateReplyEnabled">

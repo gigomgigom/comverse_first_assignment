@@ -32,7 +32,7 @@ public interface BoardDao {
 	public void updateBoardToDisable(int boardNo);
 	
 	//댓글 작성
-	public void insertReply(ReplyDto reply);
+	public void insertReply(BoardDto reply);
 	//댓글 삭제
 	public void updateReplyEnabled(int replyNo);
 	//댓글 수정
