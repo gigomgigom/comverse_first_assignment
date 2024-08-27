@@ -77,20 +77,47 @@
 					hit_cnt, board_level,
 					board_path, board_enabled,
 					root_date
-			from	BoardTree
+		from		BoardTree
 		order by	root_date desc, board_path, board_level
 		limit 		#{pager.startRowIndex}, #{pager.rowsPerPage}
 	</select>
 	<select id="selectBoardByBoardNo">
-		select	board_no, board_title, board_writer, board_date, board_content, img_name
+		select	board_no, board_title, pre_board, anon_id, board_writer, board_date, board_content, img_name, hit_cnt
 		from	board
 		where	board_no = #{boardNo} and board_enabled = 1
 	</select>
 	<select id="selectReplyListByBoardNo">
-		select		reply_no, reply_writer, reply_content, reply_date
-		from		reply
-		where		reply_board = #{boardNo} and reply_enabled = 1
-		order by 	reply_no desc;
+		with recursive BoardTree as (
+			select
+					board_no, board_title, board_content,
+			        pre_board, board_writer,
+			        anon_id, board_date, 
+			        hit_cnt, 1 as board_level,
+			        cast(board_no as char(50)) as board_path,
+			        board_enabled
+			from 	firstproject.board
+		    where	board_no = #{boardNo}
+		    
+		    union all
+		    
+		    select
+					b.board_no, b.board_title, b.board_content,
+			        b.pre_board, b.board_writer,
+			        b.anon_id, b.board_date,
+			        b.hit_cnt, bt.board_level + 1,
+			        concat(bt.board_path, '-', b.board_no) as board_path,
+			        b.board_enabled
+			from	firstproject.board b
+		    join	BoardTree bt on b.pre_board = bt.board_no
+		)
+		select
+					board_no, board_title, board_content,
+				    pre_board, board_writer,
+				    anon_id, board_date,
+				    hit_cnt, board_level,
+				    board_path, board_enabled
+		from		BoardTree
+		order by	board_path, board_level, board_date desc
 	</select>
 	<select id="selectBoardImgByBoardNo">
 		select	img_name, img_type, img_data
@@ -173,5 +200,11 @@
 		select	board_writer
 		from 	board
 		where	board_no = #{boardNo} and board_enabled = 1
+	</select>
+	
+	<select id="selectReplyForCheckIdPw" resultType="bo">
+		select	anon_id, anon_pw,
+		from	board
+		where	board_no = #{boardNo}
 	</select>
 </mapper>

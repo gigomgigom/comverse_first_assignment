@@ -59,10 +59,14 @@
         				</tr>
         			</thead>
         			<tbody>
-        				<c:forEach var="board" items="${boardList}">
+        				<c:forEach var="list" items="${boardList}" varStatus="status">
+        					<c:set var="board" value="${boardList[status.index]}"/>
+        					<c:set var="prev" value="${boardList[status.index - 1].boardNo}"/>
+        					<c:set var="next" value="${boardList[status.index + 1].boardNo}"/>
+        					
         					<tr class="row ${board.boardLevel == 1 ? 'table-info' : ''}">
 	        					<th class="col-sm-1 text-center border-right">${board.boardNo}</th>
-	        					<td class="col-sm-5 border-right" style="padding-left: ${board.boardLevel != 1 ? board.boardLevel * 10 : 5}px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}">${board.boardLevel != 1 ? 'ㄴ' : ''}${board.boardEnabled ? board.boardTitle : '삭제 된 게시글입니다.'}</a></td>
+	        					<td class="col-sm-5 border-right" style="padding-left: ${board.boardLevel != 1 ? board.boardLevel * 10 : 5}px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}&prev=${prev}&next=${next}">${board.boardLevel != 1 ? 'ㄴ' : ''}${board.boardEnabled ? board.boardTitle : '삭제 된 게시글입니다.'}</a></td>
 	        					<td class="col-sm-2 text-center border-right">${board.boardWriter != null ? board.boardWriter : board.anonId}</td>
 	        					<td class="col-sm-2 text-center border-right"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
 	        					<td class="col-sm-2 text-center">${board.hitCnt}</td>

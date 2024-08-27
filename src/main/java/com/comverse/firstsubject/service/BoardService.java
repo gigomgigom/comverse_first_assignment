@@ -45,8 +45,10 @@ public class BoardService {
 	}	
 	
 	//댓글 목록 조회
-	public List<ReplyDto> getReplyList(int boardNo) {
-		return boardDao.selectReplyListByBoardNo(boardNo);
+	public List<BoardDto> getReplyList(int boardNo) {
+		List<BoardDto> replyList = boardDao.selectReplyListByBoardNo(boardNo);
+		replyList.remove(0);
+		return replyList;
 	}
 	
 	//-------------------------------------------------------------
@@ -87,6 +89,12 @@ public class BoardService {
 	//게시글 작성자 찾
 	public String getBoardWriterByBoNo(int boardNo) {
 		return boardDao.selectBoardWriterByBoNo(boardNo);
+	}
+	
+	//익명 아이디, 비밀번호 확인
+	public Boolean checkAnonIdPw(String anonId, String anonPw, int boardNo) {
+		BoardDto reply = boardDao.selectReplyForCheckIdPw(boardNo);
+		return null;
 	}
 
 }

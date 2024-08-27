@@ -3,7 +3,9 @@ package com.comverse.firstsubject.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,20 +73,53 @@ public class BoardController {
 	
 	//상세 조회 화면 이동
 	@GetMapping("/detail")
-	public String detailBoard(Model model, int boardNo, Authentication auth) {
+	public String detailBoard(Model model, int boardNo, String prev, String next, Authentication auth) {
 		BoardDto board = boardService.getBoardDetail(boardNo);
 		if(board == null) {
 			//해당 게시판은 존재하지 않습니다! 알림 띄우고 리다이렉트하기 
-			return null;
+			model.addAttribute("msg", "존재하지 않는 게시글입니다.");
+			model.addAttribute("url", "/");
+			return "alert";
 		} else {		
 			model.addAttribute("board", board);
+			Map<String, Object> preBoardWithStts = new HashMap<>();
+			//상단 게시글 참조 여부 파악
+			if(board.getPreBoard() != 0) {
+				BoardDto preBoard = boardService.getBoardDetail(board.getPreBoard());
+				//삭제 여부 파악
+				if(preBoard != null) {
+					preBoardWithStts.put("preBoard", preBoard);
+					preBoardWithStts.put("stts", true);
+				} else {
+					preBoardWithStts.put("stts", false);
+				}
+				model.addAttribute("preBoardWithStts", preBoardWithStts);
+			} else {
+				model.addAttribute("preBoardWithStts", null);
+			}
+			//회원 접속 여부 파악
 			if(auth != null) {
 				model.addAttribute("id", auth.getName());
 			} else {
 				model.addAttribute("id", "anonymous");
 			}
 		}
-		// invoke Service method and set Model Attribute
+		if(prev != null && !prev.isEmpty()) {
+			int prevNo = Integer.parseInt(prev);
+			BoardDto prevBo = boardService.getBoardDetail(prevNo);
+			model.addAttribute("prev", prevBo);
+		} else {
+			model.addAttribute("prev", null);
+		}
+		if(next != null && !next.isEmpty()) {
+			int nextNo = Integer.parseInt(next);
+			BoardDto nextBo = boardService.getBoardDetail(nextNo);
+			model.addAttribute("next", nextBo);
+		} else {
+			model.addAttribute("next", null);
+		}
+		List<BoardDto> replyList = boardService.getReplyList(boardNo);
+		model.addAttribute("replyList", replyList);
 		return "boarddetail";
 	}
 	
@@ -255,18 +290,18 @@ public class BoardController {
 	@PreAuthorize("isAuthenticated() and (#reply.getReplyWriter() == #auth.getName)")
 	@ResponseBody
 	@PostMapping("/update_comment")
-	public ResponseEntity<?> updateComment(@Valid @RequestBody ReplyDto reply, Authentication auth, Model model, BindingResult bindingResult){
+	public ResponseEntity<?> updateComment(@Valid @RequestBody BoardDto reply, Authentication auth, Model model, BindingResult bindingResult){
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("blank data");
 		}
 		if(auth == null) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No auth");
 		}
-		if(!reply.getReplyWriter().equals(auth.getName())) {
+		if(!reply.getBoardWriter().equals(auth.getName())) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
 		}
 		// invoke Service method
-		return ResponseEntity.ok("/board/detail?boardNo="+reply.getReplyBoard());
+		return ResponseEntity.ok("/board/detail?boardNo="+reply.getPreBoard());
 	}
 	
 	//댓글 삭제
@@ -277,5 +312,11 @@ public class BoardController {
 		return null;
 	}
 	
+	//비회원 아이디 비밀번호 일치여부 파악
+	@PostMapping("/check_anon")
+	public ResponseEntity<?> checkAnon(String anonId, String anonPw, int boardNo) {
+		Boolean result = boardService.checkAnonIdPw(anonId, anonPw, boardNo);
+		return ResponseEntity.ok(result);
+	}
 	
 }

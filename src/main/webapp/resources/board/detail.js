@@ -11,7 +11,7 @@ $(document).ready(() => {
 //수정 모드로 변환
 const viewReplyModify = (replyNo, replyWriter, boardNo) => {
 	console.log('실행')
-	const modifyDOM = '<div class="d-flex flex-column"><div class="d-flex"><h5>' + replyWriter + '</h5></div><div class="row"><div class="col-lg-10"><textarea id="content-' + replyNo + '" class="form-control form-control-lg" rows="3"></textarea></div><div class="col-lg-2 d-flex justify-content-end align-items-center"><button class="btn btn-md btn-primary" onclick="updateReply('+ replyNo +', \'' +replyWriter+ '\', ' + boardNo + ')">수정</button></div></div></div>';
+	const modifyDOM = '<div class="d-flex flex-column"><div class="d-flex"><h5>' + replyWriter + '</h5></div><div class="row"><div class="col-lg-10"><textarea id="content-' + replyNo + '" class="form-control form-control-lg" rows="3"></textarea><input id="file-' + replyNo + '" type="file" class="form-control" accept="images/*"/></div><div class="col-lg-2 d-flex justify-content-end align-items-center"><button class="btn btn-md btn-primary"	onclick="updateReply('+ replyNo +', \'' +replyWriter+ '\', ' + boardNo + ')">수정</button></div></div></div>';
 	$('#reply-'+replyNo).html(modifyDOM);
 }
 //수정하기 서버 통신

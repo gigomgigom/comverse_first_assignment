@@ -19,7 +19,7 @@ public interface BoardDao {
 	//게시글 상세 조회(게시글 정보 조회)
 	public BoardDto selectBoardByBoardNo(int boardNo);
 	//게시글 상세 조회(답글 목록 조회)
-	public List<ReplyDto> selectReplyListByBoardNo(int boardNo);
+	public List<BoardDto> selectReplyListByBoardNo(int boardNo);
 	
 	//게시글 이미지 파일 조회
 	public BoardDto selectBoardImgByBoardNo(int boardNo);
@@ -39,7 +39,9 @@ public interface BoardDao {
 	public void updateReply(ReplyDto reply);
 
 	
-	//게시글 작성자 찾기
+	//게시글 작성자 조회
 	public String selectBoardWriterByBoNo(int boardNo);
+	//익명답글 조회
+	public BoardDto selectReplyForCheckIdPw(int boardNo);
 
 }
