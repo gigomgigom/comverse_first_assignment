@@ -2,7 +2,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <header class="bg-secondary py-3 ps-3">
 	<div id="header_wrapper" class="d-flex justify-content-between">
-		<a href="/board/list?pageNo=1">
+		<a href="/board/list?pageNo=${searchIndex.pageNo}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">
 			<img src="https://comverse.co.kr/assets/img/logo.png"/>
 		</a>
 		<div class="d-flex align-items-center me-5">

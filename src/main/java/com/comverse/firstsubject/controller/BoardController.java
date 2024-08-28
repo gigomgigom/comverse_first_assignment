@@ -42,30 +42,14 @@ public class BoardController {
 
 	// 목록 조회 화면 이동
 	@GetMapping("/list")
-	public String boardList(Model model, HttpSession session, SearchIndex searchIndex) {
-		// 검색 조건 불러오기 / 세팅
-		if (searchIndex.getSearchCtg() == null) {
-			searchIndex.setSearchCtg((String) session.getAttribute("searchCtg"));
-		}
-		if (searchIndex.getKeyword() == null) {
-			searchIndex.setKeyword((String) session.getAttribute("keyword"));
-		} else {
-			// 검색을 했을때 무조건 1page로 이동하게끔 함.
+	public String boardList(Model model, SearchIndex searchIndex) {
+		if(searchIndex.getPageNo() == null || searchIndex.getPageNo().equals("")) {
 			searchIndex.setPageNo("1");
 		}
-		if (searchIndex.getPageNo() == null || Integer.parseInt(searchIndex.getPageNo()) < 1) {
-			searchIndex.setPageNo((String) session.getAttribute("pageNo"));
-			if (searchIndex.getPageNo() == null) {
-				searchIndex.setPageNo("1");
-			}
-		}
-		session.setAttribute("searchCtg", searchIndex.getSearchCtg());
-		session.setAttribute("keyword", searchIndex.getKeyword());
-		session.setAttribute("pageNo", searchIndex.getPageNo());
-
 		// 목록 가져오기
 		List<BoardDto> list = boardService.getBoardList(searchIndex);
-
+		
+		model.addAttribute("searchIndex", searchIndex);
 		model.addAttribute("boardList", list);
 		model.addAttribute("pager", searchIndex.getPager());
 		return "boardlist";
@@ -73,12 +57,14 @@ public class BoardController {
 
 	// 상세 조회 화면 이동
 	@GetMapping("/detail")
-	public String detailBoard(Model model, int boardNo, String prev, String next, Authentication auth) {
+	public String detailBoard(Model model, int boardNo, String searchCtg, String keyword, String pageNo, Authentication auth) {
 		BoardDto board = boardService.getBoardDetail(boardNo);
+		SearchIndex searchIndex = new SearchIndex(searchCtg, keyword, pageNo);
+		log.info(searchIndex.toString());
 		if (board == null) {
 			// 해당 게시판은 존재하지 않습니다! 알림 띄우고 리다이렉트하기
 			model.addAttribute("msg", "존재하지 않는 게시글입니다.");
-			model.addAttribute("url", "/");
+			model.addAttribute("url", "/board/list?searchCtg="+searchCtg+"&keyword="+keyword+"&pageNo="+pageNo);
 			return "alert";
 		} else {
 			model.addAttribute("board", board);
@@ -92,20 +78,6 @@ public class BoardController {
 			} else {
 				model.addAttribute("id", "anonymous");
 			}
-		}
-		if (prev != null && !prev.isEmpty()) {
-			int prevNo = Integer.parseInt(prev);
-			BoardDto prevBo = boardService.getBoardDetail(prevNo);
-			model.addAttribute("prev", prevBo);
-		} else {
-			model.addAttribute("prev", null);
-		}
-		if (next != null && !next.isEmpty()) {
-			int nextNo = Integer.parseInt(next);
-			BoardDto nextBo = boardService.getBoardDetail(nextNo);
-			model.addAttribute("next", nextBo);
-		} else {
-			model.addAttribute("next", null);
 		}
 		List<BoardDto> replyList = boardService.getReplyList(boardNo);
 		model.addAttribute("replyList", replyList);

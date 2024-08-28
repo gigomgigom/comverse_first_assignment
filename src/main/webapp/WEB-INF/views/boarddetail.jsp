@@ -85,7 +85,7 @@
 			</div>
 		</div>
 	</section>
-	<c:if test="${prev != null || next != null}">
+	<c:if test="${false}">
 		<section
 			class="container-fluid mt-5 pt-5 d-flex justify-content-center">
 			<div id="move_post_container"
