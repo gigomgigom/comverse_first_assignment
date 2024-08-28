@@ -44,5 +44,17 @@ const updateReply = (replyNo, replyWriter, boardNo) => {
 				}
 		})
 	}
-	
+}
+//게시글 삭제 버튼
+const deleteBoard = (boardNo, anonId) => {
+	if(anonId !== null && anonId !== '') {
+		$('#pw-modal').modal('show');
+	} else {
+		location.href = '/board/delete?boardNo='+boardNo;
+	}
+}
+//익명 게시글 삭제
+const deleteAnonBoard = (boardNo) => {
+	let password = $('#pw-input').val();
+	location.href = '/board/delete?boardNo='+boardNo+'&anonPw='+password;
 }

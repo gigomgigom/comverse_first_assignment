@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-	@ExceptionHandler(Exception.class)
+	/*@ExceptionHandler(Exception.class)
 	public String handleServerError(Exception ex) {
-		log.info(ex.toString());
+		log.info(ex+"");
 		return "error/e_500";
-	}
+	}*/
 }

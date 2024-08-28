@@ -3,139 +3,141 @@
 <mapper namespace="com.comverse.firstsubject.dao.BoardDao">
 	
 	<select id="selectTotalRows" parameterType="search">
-		with recursive BoardTree as (
-			select
-					board_no,
-					pre_board
-			from	board
-			where	pre_board is null and board_ctg = 1
-					<if test='keyword != null and !keyword.equals("")'>
-						<if test='searchCtg.equals("title")'>
-							and board_title like concat('%', #{keyword}, '%')
-						</if>
-						<if test='searchCtg.equals("content")'>
-							and board_content like concat('%', #{keyword}, '%')
-						</if>
-						<if test='searchCtg.equals("writer")'>
-							and board_writer like concat('%', #{keyword}, '%')
-						</if>
-					</if>
-			
-			union all
-			
-			select
-					b.board_no,
-					b.pre_board
-			from	board b
-			join	BoardTree bt on b.pre_board = bt.board_no
-			where	board_ctg = 1
-		)
-		select	count(*)
-		from	BoardTree
+		select		count(b.board_no)
+		from		board b
+		join		(
+						select 	board_ref
+						from	board
+						where	board_depth = 0
+								<if test='keyword != null and !keyword.equals("")'>
+									<if test='searchCtg.equals("title")'>
+										and board_title like concat('%', #{keyword}, '%')
+									</if>
+									<if test='searchCtg.equals("content")'>
+										and board_content like concat('%', #{keyword}, '%')
+									</if>
+									<if test='searchCtg.equals("writer")'>
+										and board_writer like concat('%', #{keyword}, '%')
+									</if>
+								</if>
+					) fb
+		on			fb.board_ref = b.board_ref
 	</select>
 	<select id="selectBoardList" parameterType="search" resultType="bo">
-		with recursive BoardTree as (
-			select
-					board_no, board_title,
-					pre_board, board_writer,
-					anon_id, board_date,
-					hit_cnt, 1 as board_level,
-					cast(board_no as char(50)) as board_path,
-					board_enabled, board_date as root_date
-			from	board
-			where	pre_board is null and board_ctg = 1
-					<if test='keyword != null and !keyword.equals("")'>
-						<if test='searchCtg.equals("title")'>
-							and board_title like concat('%', #{keyword}, '%')
-						</if>
-						<if test='searchCtg.equals("content")'>
-							and board_content like concat('%', #{keyword}, '%')
-						</if>
-						<if test='searchCtg.equals("writer")'>
-							and board_writer like concat('%', #{keyword}, '%')
-						</if>
-					</if>
-			
-			
-			union all
-			
-			select
-					b.board_no, b.board_title,
-					b.pre_board, b.board_writer,
-					b.anon_id, b.board_date,
-					b.hit_cnt, bt.board_level + 1,
-					concat(bt.board_path, '-', b.board_no) as board_path,
-					b.board_enabled, bt.root_date
-			from	board b
-			join	BoardTree bt on b.pre_board = bt.board_no
-			where	board_ctg = 1
-		)
-		select
-					board_no, board_title,
-					pre_board, board_writer,
-					anon_id, board_date,
-					hit_cnt, board_level,
-					board_path, board_enabled,
-					root_date
-		from		BoardTree
-		order by	root_date desc, board_path, board_level
-		limit 		#{pager.startRowIndex}, #{pager.rowsPerPage}
+		select		b.board_no, 
+					b.board_title, 
+					b.anon_id, 
+					b.board_writer, 
+					b.board_date, 
+					b.hit_cnt, 
+					b.board_enabled,
+					b.board_depth
+		from		board b
+		join		(
+						select	board_ref
+						from	board
+						where	board_depth = 0
+								<if test='keyword != null and !keyword.equals("")'>
+									<if test='searchCtg.equals("title")'>
+										and board_title like concat('%', #{keyword}, '%')
+									</if>
+									<if test='searchCtg.equals("content")'>
+										and board_content like concat('%', #{keyword}, '%')
+									</if>
+									<if test='searchCtg.equals("writer")'>
+										and board_writer like concat('%', #{keyword}, '%')
+									</if>
+								</if>
+					) fb
+		on			fb.board_ref = b.board_ref
+		order by	b.board_ref desc, 
+					b.board_step
+		limit		#{pager.startRowIndex}, #{pager.rowsPerPage}
 	</select>
 	<select id="selectBoardByBoardNo">
-		select	board_no, board_title, pre_board, anon_id, board_writer, board_date, board_content, img_name, hit_cnt
+		select	board_no, 
+				board_title, 
+				anon_id, 
+				board_writer, 
+				board_date, 
+				board_content, 
+				img_name, 
+				hit_cnt,
+				board_depth
 		from	board
-		where	board_no = #{boardNo} and board_enabled = 1
+		where	board_no = #{boardNo} 
+				and board_enabled = 1
 	</select>
 	<select id="selectReplyListByBoardNo">
-		with recursive BoardTree as (
-			select
-					board_no, board_title, board_content,
-			        pre_board, board_writer,
-			        anon_id, board_date, 
-			        hit_cnt, 1 as board_level,
-			        cast(board_no as char(50)) as board_path,
-			        board_enabled
-			from 	firstproject.board
-		    where	board_no = #{boardNo}
-		    
-		    union all
-		    
-		    select
-					b.board_no, b.board_title, b.board_content,
-			        b.pre_board, b.board_writer,
-			        b.anon_id, b.board_date,
-			        b.hit_cnt, bt.board_level + 1,
-			        concat(bt.board_path, '-', b.board_no) as board_path,
-			        b.board_enabled
-			from	firstproject.board b
-		    join	BoardTree bt on b.pre_board = bt.board_no
-		)
-		select
-					board_no, board_title, board_content,
-				    pre_board, board_writer,
-				    anon_id, board_date,
-				    hit_cnt, board_level,
-				    board_path, board_enabled
-		from		BoardTree
-		order by	board_path, board_level, board_date desc
+		select		b.board_no, 
+					b.board_title, 
+					b.board_date, 
+					b.anon_id, 
+					b.board_writer, 
+					b.board_step, 
+					b.board_depth,
+					b.board_enabled					
+		from		board as b		
+		join		(		
+						select	board_ref, 
+								board_step, 
+								board_depth								
+						from	board
+						where	board_no = #{boardNo}						
+					) as pb					
+		on			b.board_ref = pb.board_ref 
+					and b.board_depth > pb.board_depth 
+					and b.board_step > pb.board_step					
+		order by	board_step
 	</select>
+	<select id="selectParentBoardByBoardNo">
+		select		b.board_no, 
+					b.board_title, 
+					b.board_writer, 
+					b.board_content,
+					b.board_enabled
+		from		board b
+		join		(
+						select	board_ref, 
+								board_step, 
+								board_depth
+						from	board
+						where	board_no = #{boardNo}
+					) cb
+		on			b.board_ref = cb.board_ref
+					and b.board_depth = cb.board_depth - 1
+					and b.board_enabled != 0
+		order by	b.board_step desc
+		limit		1 
+	</select>
+	<update id="updateBoardHitCnt">
+		update	board
+		set		hit_cnt = hit_cnt + 1
+		where	board_no = #{boardNo}
+	</update>
 	<select id="selectBoardImgByBoardNo">
 		select	img_name, img_type, img_data
 		from	board
 		where	board_no = #{boardNo} and board_enabled = 1
 	</select>
 	<insert id="insertNewBoard" parameterType="bo">
+		<selectKey resultType="int" keyProperty="boardRef" order="BEFORE">
+			select	max(board_ref) + 1 as board_ref
+			from	board
+		</selectKey>
 		insert into board
 			(
 				board_title, board_writer, board_date, board_ctg,
 				board_content, img_name, img_type, 
-				img_data, board_enabled, hit_cnt
+				img_data, board_enabled, hit_cnt,
+				board_ref, board_step, board_depth
 			)
 		values
 			(
 				#{boardTitle}, #{boardWriter}, curdate(), #{boardCtg},
 				#{boardContent}, #{imgName}, #{imgType},
-				#{imgData}, #{boardEnabled}, 0
+				#{imgData}, #{boardEnabled}, 0,
+				#{boardRef}, #{boardStep}, #{boardDepth}
 			)
 	</insert>
 	<update id="updateBoard" parameterType="bo">
@@ -155,10 +157,28 @@
 		set		board_enabled = 0
 		where	board_no = #{boardNo}
 	</update>
-	<insert id="insertReply" parameterType="rply">
+	
+	<select id="selectParentBoard" resultType="bo">
+		select	board_ref, board_step, board_depth
+		from	board
+		where	board_no = #{parentBoardNo}
+	</select>
+	<update id="updateBoardStep" parameterType="bo">
+		update	board
+		set		board_step = board_step + 1
+		where	board_ref = #{boardRef} and board_step > #{boardStep}
+	</update>
+	<insert id="insertReply" parameterType="bo">
+		<selectKey resultType="bo" keyProperty="boardRef,boardStep,boardDepth" order="BEFORE">
+			select 	board_ref, 
+					board_step + 1 as board_step, 
+					board_depth + 1 as board_depth
+			from	board
+			where	board_no = #{preBoard}
+		</selectKey>
 		insert into	board
 			(
-				board_title, board_ctg, pre_board,
+				board_title, board_ctg,
 				<if test="boardWriter != null">
 					board_writer,
 				</if>
@@ -168,11 +188,12 @@
 				</if>
 				board_date, board_content,
 				img_name, img_type, img_data,
-				board_enabled, hit_cnt
+				board_enabled, hit_cnt,
+				board_ref, board_step, board_depth
 			)
 		values
 			(
-				#{boardTitle}, #{boardCtg}, #{preBoard},
+				#{boardTitle}, #{boardCtg},
 				<if test="boardWriter != null">
 					#{boardWriter},
 				</if>
@@ -182,7 +203,8 @@
 				</if>
 				curdate(), #{boardContent},
 				#{imgName}, #{imgType}, #{imgData},
-				1, 0
+				1, 0,
+				#{boardRef}, #{boardStep}, #{boardDepth}
 			)
 	</insert>
 	<update id="updateReplyEnabled">
@@ -196,8 +218,8 @@
 		where	reply_no = #{replyNo}
 	</update>
 	
-	<select id="selectBoardWriterByBoNo" resultType="String">
-		select	board_writer
+	<select id="selectBoardWriterByBoNo" resultType="bo">
+		select	board_writer, anon_pw
 		from 	board
 		where	board_no = #{boardNo} and board_enabled = 1
 	</select>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.comverse.firstsubject.dao.BoardDao;
 import com.comverse.firstsubject.dto.BoardDto;
@@ -40,14 +41,21 @@ public class BoardService {
 	//-------------------------------------------------------------
 	
 	//게시글 상세 조회
+	@Transactional
 	public BoardDto getBoardDetail(int boardNo) {
-		return boardDao.selectBoardByBoardNo(boardNo);
-	}	
-	
+		BoardDto board = boardDao.selectBoardByBoardNo(boardNo);
+		if(board != null) {
+			boardDao.updateBoardHitCnt(boardNo);
+		}
+		return board;
+	}
+	//댓글의 부모 글 조회
+	public BoardDto getParentBoard(int boardNo) {
+		return boardDao.selectParentBoardByBoardNo(boardNo);
+	}
 	//댓글 목록 조회
 	public List<BoardDto> getReplyList(int boardNo) {
 		List<BoardDto> replyList = boardDao.selectReplyListByBoardNo(boardNo);
-		replyList.remove(0);
 		return replyList;
 	}
 	
@@ -73,7 +81,10 @@ public class BoardService {
 	}
 	//-------------------------------------------------------------
 	//댓글 작성
+	@Transactional
 	public void writeReply(BoardDto reply) {
+		BoardDto parentDto = boardDao.selectParentBoard(reply.getPreBoard());
+		boardDao.updateBoardStep(parentDto);
 		boardDao.insertReply(reply);
 	}
 	//댓글 삭제
@@ -87,7 +98,7 @@ public class BoardService {
 	
 	
 	//게시글 작성자 찾
-	public String getBoardWriterByBoNo(int boardNo) {
+	public BoardDto getBoardWriterByBoNo(int boardNo) {
 		return boardDao.selectBoardWriterByBoNo(boardNo);
 	}
 	

@@ -15,7 +15,6 @@ public class BoardDto {
 	private String boardTitle;
 	
 	private int boardCtg;
-	private int preBoard;
 	private String anonId;
 	private String anonPw;
 	private String boardWriter;
@@ -30,8 +29,11 @@ public class BoardDto {
 	private boolean boardEnabled;
 	private String hitCnt;
 	
-	private int boardLevel;
-	private String boardPath;
+	private int boardRef;
+	private int boardStep;
+	private int boardDepth;
+	
+	private String preBoard;
 	
 	private MultipartFile battach;
 }

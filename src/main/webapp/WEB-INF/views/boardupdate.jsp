@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html>
    <head>
@@ -25,6 +26,10 @@
         			<input type="file" class="form-control mt-5" accept="image/*" name="battach">
         			<input type="hidden" value="${board.boardWriter}" name="boardWriter">
         			<input type="hidden" value="${board.boardNo}" name="boardNo">
+        			<c:if test="${board.boardWriter==null}">
+        				<label for="pw-input" class="mt-5">댓글을 작성하셨을때 기입한 비밀번호를 입력해주세요.</label>
+        				<input id="pw-input" type="password" class="w-25 form-control" name="anonPw">
+        			</c:if>
         			<div class="d-flex justify-content-end pt-5">
         				<button type="submit" class="btn btn-lg btn-primary">저장</button>
         			</div>

@@ -19,25 +19,25 @@
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/common/header.jsp"%>
-	<c:if test="${preBoardWithStts != null}">
+	<c:if test="${board.boardDepth != 0}">
 		<section
 			class="container-fluid mt-5 pt-5 d-flex justify-content-center">
 			<div id="pre_board_container"
 				class="bg-secondary text-white w-50 p-2">
-				<a href="/board/detail?boardNo=${preBoardWithStts.preBoard.boardNo}"
+				<a href="/board/detail?boardNo=${parentBoard.boardNo}"
 					class="btn text-white fs-1 mb-3">상위 포스트 게시글</a>
 				<hr>
-				<c:if test="${preBoardWithStts.stts}">
-					<c:if test="${preBoardWithStts.preBoard.boardWriter != null}">
-						<p>작성자 : ${preBoardWithStts.preBoard.boardWriter}</p>
+				<c:if test="${parentBoard != null}">
+					<c:if test="${parentBoard.boardWriter != null}">
+						<p>작성자 : ${parentBoard.boardWriter}</p>
 					</c:if>
-					<c:if test="${preBoardWithStts.preBoard.boardWriter == null}">
-						<p>작성자 : ${preBoardWithStts.preBoard.anonId}</p>
+					<c:if test="${parentBoard.boardWriter == null}">
+						<p>작성자 : ${parentBoard.anonId}</p>
 					</c:if>
-					<p>제 목 : ${preBoardWithStts.preBoard.boardTitle}</p>
-					<p>내 용 : ${preBoardWithStts.preBoard.boardContent}</p>
+					<p>제 목 : ${parentBoard.boardTitle}</p>
+					<p>내 용 : ${parentBoard.boardContent}</p>
 				</c:if>
-				<c:if test="${!preBoardWithStts.stts}">
+				<c:if test="${parentBoard == null}">
 					<p>삭제된 글입니다.</p>
 				</c:if>
 			</div>
@@ -48,7 +48,7 @@
 			class="w-100 d-flex justify-content-center">
 			<div class="w-50">
 				<h1>제목: ${board.boardTitle}</h1>
-				<hr />
+				<hr>
 				<p>
 					작성일 :
 					<fmt:formatDate value="${board.boardDate}" type="date" />
@@ -63,10 +63,7 @@
 				<div class="row mt-5">
 					<div class="col-md-12 col-lg-6">
 						<label for="input_content">내용</label>
-						<textarea id="input_content" class="form-control form-control-lg"
-							name="boardContent" rows=15 readonly>
-        						${board.boardContent}
-        					</textarea>
+						<textarea id="input_content" class="form-control form-control-lg" name="boardContent" rows=15 readonly>${board.boardContent}</textarea>
 					</div>
 					<div
 						class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center">
@@ -79,12 +76,10 @@
 						</c:if>
 					</div>
 				</div>
-				<c:if test='${board.boardWriter == id}'>
+				<c:if test='${board.boardWriter == id || board.boardWriter == null}'>
 					<div class="d-flex justify-content-end pt-5">
-						<a class="btn btn-lg btn-primary me-3"
-							href="/board/modify?boardNo=${board.boardNo}">수정</a> <a
-							class="btn btn-lg btn-danger"
-							href="/board/delete?boardNo=${board.boardNo}&boardWriter=${board.boardWriter}">삭제</a>
+						<a class="btn btn-lg btn-primary me-3" href="/board/modify?boardNo=${board.boardNo}">수정</a>							
+						<button class="btn btn-lg btn-danger" onClick="deleteBoard(${board.boardNo}, '${board.anonId}')">삭제</button>
 					</div>
 				</c:if>
 			</div>
@@ -121,17 +116,14 @@
 					enctype="multipart/form-data">
 					<textarea id="comment-input" class="form-control form-control-lg"
 						rows=5 name="boardContent"></textarea>
-					<input type="file" class="form-control mt-2 mb-3" accept="image/*"
-						name="battach" /> <input type="hidden" value="${board.boardNo}"
-						name="preBoard"> <input type="hidden"
-						value="${'RE: '}${board.boardTitle}" name="boardTitle">
+					<input type="file" class="form-control mt-2 mb-3" accept="image/*" name="battach" />
+					<input type="hidden" value="${board.boardNo}" name="preBoard">
+					<input type="hidden" value="${'RE: '}${board.boardTitle}" name="boardTitle">
 					<c:if test="${id == 'anonymous'}">
 						<label for="anon_id" class="text-white">이름</label>
-						<input id="anon_id" name="anonId" type="text"
-							class="w-25 form-control form-control-md" />
+						<input id="anon_id" name="anonId" type="text" class="w-25 form-control form-control-md" />
 						<label for="anon_pw" class="text-white">비밀번호</label>
-						<input id="anon_pw" name="anonPw" type="password"
-							class="w-25 form-control form-control-md" />
+						<input id="anon_pw" name="anonPw" type="password" class="w-25 form-control form-control-md" />
 					</c:if>
 					<div class="d-flex justify-content-end">
 						<button type="submit" class="btn btn-lg btn-warning mt-3">저장</button>
@@ -148,24 +140,23 @@
 					</c:if>
 					<c:forEach var="reply" items="${replyList}">
 						<div id="reply-${reply.boardNo}" class="p-5 border-bottom">
-							<div class="d-flex justify-content-between row" style="padding-left: ${reply.boardLevel == 1 ? 0 : reply.boardLevel*20}px">
+							<div class="d-flex justify-content-between row" style="padding-left: ${reply.boardDepth==board.boardDepth+1?0:(reply.boardDepth-board.boardDepth)*20}px">
 								<c:if test="${reply.boardEnabled}">
 									<div class="col-lg-10">
+										<a class="btn btn-lg ps-0" href="/board/detail?boardNo=${reply.boardNo}">${reply.boardDepth==board.boardDepth+1?'':'ㄴ'}제목 : ${reply.boardTitle}</a>
 										<c:if test="${reply.boardWriter == null}">
-											<h5>${reply.boardLevel == 1 ? '' : 'ㄴ'} ${reply.anonId}</h5>
+											<p>작성자 : ${reply.anonId}</p>
 										</c:if>
 										<c:if test="${reply.boardWriter != null}">
-											<h5>${reply.boardLevel == 1 ? '' : 'ㄴ'} ${reply.boardWriter}</h5>
+											<p>작성자 : ${reply.boardWriter}</p>
 										</c:if>
-										<p>${reply.boardTitle}</p>
-										<p>${reply.boardContent}</p>
 									</div>
 									<div class="col-lg-2">
 										<p>
 											<fmt:formatDate value="${reply.boardDate}" type="date"></fmt:formatDate>
 										</p>
 										<c:if
-											test='${reply.boardWriter == id || reply.anonId != null}'>
+											test='${false}'>
 											<button class="btn btn-sm btn-primary"
 												onclick="viewReplyModify(${reply.boardNo},  '${reply.boardWriter}', ${board.boardNo})">수정</button>
 											<a class="btn btn-sm btn-danger"
@@ -185,5 +176,23 @@
 			</div>
 		</div>
 	</section>
+	<div id="pw-modal" class="modal" tabindex="-1">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">비밀번호 확인</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		      	<label for="password-input">댓글을 작성하셨을때 기입하셨던 비밀번호를 입력해주세요.</label>
+		        <input type="password" id="pw-input" class="form-control">
+		      </div>
+		      <div class="modal-footer">
+		     	<button type="button" class="btn btn-primary" onClick="deleteAnonBoard(${board.boardNo})">확인</button>
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		</div>
+	</div>
 </body>
 </html>

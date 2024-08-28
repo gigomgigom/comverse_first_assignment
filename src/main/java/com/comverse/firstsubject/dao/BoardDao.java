@@ -20,6 +20,10 @@ public interface BoardDao {
 	public BoardDto selectBoardByBoardNo(int boardNo);
 	//게시글 상세 조회(답글 목록 조회)
 	public List<BoardDto> selectReplyListByBoardNo(int boardNo);
+	//게시글 상세 조회(부모 게시글 조회)
+	public BoardDto selectParentBoardByBoardNo(int boardNo);
+	//게시글 조회 시 조회수 1 증가
+	public void updateBoardHitCnt(int boardNo);
 	
 	//게시글 이미지 파일 조회
 	public BoardDto selectBoardImgByBoardNo(int boardNo);
@@ -32,6 +36,8 @@ public interface BoardDao {
 	public void updateBoardToDisable(int boardNo);
 	
 	//댓글 작성
+	public BoardDto selectParentBoard(String parentBoardNo);
+	public void updateBoardStep(BoardDto parentBoard);
 	public void insertReply(BoardDto reply);
 	//댓글 삭제
 	public void updateReplyEnabled(int replyNo);
@@ -40,8 +46,10 @@ public interface BoardDao {
 
 	
 	//게시글 작성자 조회
-	public String selectBoardWriterByBoNo(int boardNo);
+	public BoardDto selectBoardWriterByBoNo(int boardNo);
 	//익명답글 조회
 	public BoardDto selectReplyForCheckIdPw(int boardNo);
+
+	
 
 }
