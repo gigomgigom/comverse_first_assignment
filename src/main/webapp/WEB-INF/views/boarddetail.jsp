@@ -79,26 +79,26 @@
 				<c:if test='${board.boardWriter == id || board.boardWriter == null}'>
 					<div class="d-flex justify-content-end pt-5">
 						<a class="btn btn-lg btn-primary me-3" href="/board/modify?boardNo=${board.boardNo}">수정</a>							
-						<button class="btn btn-lg btn-danger" onClick="deleteBoard(${board.boardNo}, '${board.anonId}')">삭제</button>
+						<button class="btn btn-lg btn-danger" onClick="deleteBoard(${board.boardNo}, '${board.anonId}', '${searchIndex.searchCtg}', '${searchIndex.keyword}', '${searchIndex.pageNo}')">삭제</button>
 					</div>
 				</c:if>
 			</div>
 		</div>
 	</section>
-	<c:if test="${false}">
+	<c:if test="${prevBo != null || nextBo != null}">
 		<section
 			class="container-fluid mt-5 pt-5 d-flex justify-content-center">
 			<div id="move_post_container"
 				class="w-50 d-flex justify-content-between">
 				<div>
-					<c:if test="${prev != null}">
-						<a class="btn btn-lg btn-primary" href="/board/detail?boardNo=${prev.boardNo}"> 이전 포스트<br>${prev.boardTitle}
+					<c:if test="${prevBo != null}">
+						<a class="btn btn-lg btn-primary" href="/board/detail?boardNo=${prevBo.boardNo}"> 이전 포스트<br>${prevBo.boardTitle}
 						</a>
 					</c:if>
 				</div>
 				<div>
-					<c:if test="${next != null}">
-						<a class="btn btn-lg btn-primary" href="/board/detail?boardNo=${next.boardNo}"> 다음 포스트<br>${next.boardTitle}
+					<c:if test="${nextBo != null}">
+						<a class="btn btn-lg btn-primary" href="/board/detail?boardNo=${nextBo.boardNo}"> 다음 포스트<br>${nextBo.boardTitle}
 						</a>
 					</c:if>
 				</div>
@@ -188,7 +188,7 @@
 		        <input type="password" id="pw-input" class="form-control">
 		      </div>
 		      <div class="modal-footer">
-		     	<button type="button" class="btn btn-primary" onClick="deleteAnonBoard(${board.boardNo})">확인</button>
+		     	<button type="button" class="btn btn-primary" onClick="deleteAnonBoard(${board.boardNo}, '${searchIndex.searchCtg}', '${searchIndex.keyword}', '${searchIndex.pageNo}')">확인</button>
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		      </div>
 		    </div>

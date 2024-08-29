@@ -46,15 +46,15 @@ const updateReply = (replyNo, replyWriter, boardNo) => {
 	}
 }
 //게시글 삭제 버튼
-const deleteBoard = (boardNo, anonId) => {
+const deleteBoard = (boardNo, anonId, searchCtg, keyword, pageNo) => {
 	if(anonId !== null && anonId !== '') {
 		$('#pw-modal').modal('show');
 	} else {
-		location.href = '/board/delete?boardNo='+boardNo;
+		location.href = '/board/delete?boardNo='+boardNo+'&seachCtg='+searchCtg+'&keyword='+keyword+'&pageNo='+pageNo;
 	}
 }
 //익명 게시글 삭제
-const deleteAnonBoard = (boardNo) => {
+const deleteAnonBoard = (boardNo, searchCtg, keyword, pageNo) => {
 	let password = $('#pw-input').val();
-	location.href = '/board/delete?boardNo='+boardNo+'&anonPw='+password;
+	location.href = '/board/delete?boardNo='+boardNo+'&anonPw='+password+'&seachCtg='+searchCtg+'&keyword='+keyword+'&pageNo='+pageNo;
 }

@@ -1,5 +1,6 @@
 package com.comverse.firstsubject.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,10 +103,14 @@ public class BoardService {
 		return boardDao.selectBoardWriterByBoNo(boardNo);
 	}
 	
-	//익명 아이디, 비밀번호 확인
-	public Boolean checkAnonIdPw(String anonId, String anonPw, int boardNo) {
-		BoardDto reply = boardDao.selectReplyForCheckIdPw(boardNo);
-		return null;
+	//전,후 게시판 찾기
+	public HashMap<String, Object> getPrevNextBoard(int boardRef) {
+		HashMap<String, Object> prevNext = boardDao.selectBoardPrevNext(boardRef);
+		BoardDto prevBo = boardDao.selectBoardByBoardNo(Integer.parseInt(prevNext.get("prev_bo").toString()));
+		BoardDto nextBo = boardDao.selectBoardByBoardNo(Integer.parseInt(prevNext.get("next_bo").toString()));
+		prevNext.put("prevBo", prevBo);
+		prevNext.put("nextBo", nextBo);
+		return prevNext;
 	}
 
 }

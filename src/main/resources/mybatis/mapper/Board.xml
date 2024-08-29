@@ -63,10 +63,28 @@
 				board_content, 
 				img_name, 
 				hit_cnt,
-				board_depth
+				board_depth,
+				board_ref
 		from	board
 		where	board_no = #{boardNo} 
 				and board_enabled = 1
+	</select>
+	<select id="selectBoardPrevNext" resultType="hashmap">
+		select	pninfo.board_no, pninfo.prev_bo, pninfo.next_bo
+		from	(
+					select 	board_no,
+							lead(board_no, 1, 9999) over(order by board_no) as prev_bo,
+                    		lag(board_no, 1, 9999) over(order by board_no) as next_bo
+                    from	board
+                    where	board_depth = 0
+                    order by board_no desc
+				) pninfo
+		join	(
+					select	board_no
+					from	board
+					where	board_ref=#{boardRef} and board_depth = 0
+				) high
+		on		pninfo.board_no = high.board_no;
 	</select>
 	<select id="selectReplyListByBoardNo">
 		select		b.board_no, 
@@ -222,11 +240,5 @@
 		select	board_writer, anon_pw
 		from 	board
 		where	board_no = #{boardNo} and board_enabled = 1
-	</select>
-	
-	<select id="selectReplyForCheckIdPw" resultType="bo">
-		select	anon_id, anon_pw,
-		from	board
-		where	board_no = #{boardNo}
 	</select>
 </mapper>

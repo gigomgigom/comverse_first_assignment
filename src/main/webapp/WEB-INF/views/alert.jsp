@@ -9,8 +9,11 @@
 <script>
 	var msg = "<c:out value='${msg}'/>";
 	var url = "<c:out value='${url}'/>";
+	var searchCtg = "<c:out value='${searchCtg}'/>";
+	var keyword = "<c:out value='${keyword}'/>";
+	var pageNo = "<c:out value='${pageNo}'/>";
 	alert(msg);
-	location.href=url;
+	location.href=url+'?searchCtg='+searchCtg+'&keyword='+keyword+'&pageNo='+pageNo;
 </script>
 </head>
 <body>

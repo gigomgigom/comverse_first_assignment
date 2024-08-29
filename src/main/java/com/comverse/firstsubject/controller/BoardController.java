@@ -60,18 +60,25 @@ public class BoardController {
 	public String detailBoard(Model model, int boardNo, String searchCtg, String keyword, String pageNo, Authentication auth) {
 		BoardDto board = boardService.getBoardDetail(boardNo);
 		SearchIndex searchIndex = new SearchIndex(searchCtg, keyword, pageNo);
-		log.info(searchIndex.toString());
 		if (board == null) {
 			// 해당 게시판은 존재하지 않습니다! 알림 띄우고 리다이렉트하기
 			model.addAttribute("msg", "존재하지 않는 게시글입니다.");
-			model.addAttribute("url", "/board/list?searchCtg="+searchCtg+"&keyword="+keyword+"&pageNo="+pageNo);
+			model.addAttribute("url", "/board/list");
+			model.addAttribute("searchCtg", searchCtg);
+			model.addAttribute("keyword", keyword);
+			model.addAttribute("pageNo", pageNo);
 			return "alert";
 		} else {
 			model.addAttribute("board", board);
+			model.addAttribute("searchIndex", searchIndex);
 			if (board.getBoardDepth() != 0) {
 				BoardDto parentBoard = boardService.getParentBoard(board.getBoardNo());
 				model.addAttribute("parentBoard", parentBoard);
 			}
+			HashMap<String, Object> boPrevNext = boardService.getPrevNextBoard(board.getBoardRef());
+			log.info(boPrevNext.toString());
+			model.addAttribute("prevBo", boPrevNext.get("prevBo"));
+			model.addAttribute("nextBo", boPrevNext.get("nextBo"));
 			// 회원 접속 여부 파악
 			if (auth != null) {
 				model.addAttribute("id", auth.getName());
@@ -152,19 +159,24 @@ public class BoardController {
 	// 게시글 수정 화면 이동
 	// 작성한 자만 요청할 수 있게 해야함.
 	@GetMapping("/modify")
-	public String modifyBoard(Authentication auth, Model model, int boardNo) {
+	public String modifyBoard(Authentication auth, Model model, int boardNo, String searchCtg, String keyword, String pageNo) {
 		BoardDto board = boardService.getBoardDetail(boardNo);
+		SearchIndex searchIndex = new SearchIndex(boardNo+"", searchCtg, pageNo);
 		if (board.getBoardWriter() != null) {
 			if (auth != null && auth.getName().equals(board.getBoardWriter())) {
 				model.addAttribute("board", board);
 				return "boardupdate";
 			} else {
 				model.addAttribute("msg", "권한이 유효하지않습니다");
-				model.addAttribute("url", "/board/detail?boardNo=" + boardNo);
+				model.addAttribute("url", "/board/detail");
+				model.addAttribute("searchCtg", searchCtg);
+				model.addAttribute("keyword", keyword);
+				model.addAttribute("pageNo", pageNo);
 				return "alert";
 			}
 		} else {
 			model.addAttribute("board", board);
+			model.addAttribute("searchIndex", searchIndex);
 			return "boardupdate";
 		}
 

@@ -1,5 +1,6 @@
 package com.comverse.firstsubject.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -18,6 +19,8 @@ public interface BoardDao {
 	public List<BoardDto> selectBoardList(SearchIndex searchIndex);
 	//게시글 상세 조회(게시글 정보 조회)
 	public BoardDto selectBoardByBoardNo(int boardNo);
+	//게시글 이전글, 다음글 찾기
+	public HashMap<String, Object> selectBoardPrevNext(int boardRef);
 	//게시글 상세 조회(답글 목록 조회)
 	public List<BoardDto> selectReplyListByBoardNo(int boardNo);
 	//게시글 상세 조회(부모 게시글 조회)
@@ -49,7 +52,5 @@ public interface BoardDao {
 	public BoardDto selectBoardWriterByBoNo(int boardNo);
 	//익명답글 조회
 	public BoardDto selectReplyForCheckIdPw(int boardNo);
-
-	
 
 }
