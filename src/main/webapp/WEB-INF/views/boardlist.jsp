@@ -20,7 +20,7 @@
         			<a class="btn btn-lg btn-secondary w-25 me-2 disabled">
         				자유게시판
         			</a>
-        			<a class="btn btn-lg btn-primary w-25">
+        			<a class="btn btn-lg btn-primary w-25" href="/notice/list">
         				공지사항
         			</a>        			
         		</div>
@@ -87,11 +87,11 @@
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
 				  <ul class="pagination">
-				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.startPageNo - 1}">Previous</a></li>
+				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.startPageNo - 1}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">Previous</a></li>
 				    <c:forEach var="pageNum" items="${pager.pageArray}">
-				    	<li class="page-item ${pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/board/list?pageNo=${pageNum}">${pageNum}</a></li>
+				    	<li class="page-item ${pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/board/list?pageNo=${pageNum}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">${pageNum}</a></li>
 				    </c:forEach>
-				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.endPageNo + 1}">Next</a></li>
+				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.endPageNo + 1}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">Next</a></li>
 				  </ul>
 				</nav>
         	</div>

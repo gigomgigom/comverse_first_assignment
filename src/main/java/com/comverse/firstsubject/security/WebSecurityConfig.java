@@ -44,6 +44,11 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf
 			.disable()
 		);
+		http.authorizeHttpRequests((requests) ->
+			requests.requestMatchers("/notice/**").authenticated()
+					.requestMatchers("/notice/admin/**").hasRole("ADMIN")
+					.anyRequest().permitAll()
+		);
 		return http.build();
 	}
 	//유저 권한 설정

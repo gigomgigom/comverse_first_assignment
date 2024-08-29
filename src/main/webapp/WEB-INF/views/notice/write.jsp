@@ -4,7 +4,7 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>게시물 작성</title>
+      <title>공지사항 작성</title>
       <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
       <link	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"></link>
@@ -14,9 +14,9 @@
    <body>
         <%@ include file="/WEB-INF/views/common/header.jsp"%>
         <section class="container-fluid mt-5 pt-5">
-        	<form id="write-form" class="w-100 d-flex justify-content-center" action="/board/save" method="POST" enctype="multipart/form-data">
+        	<form id="write-form" class="w-100 d-flex justify-content-center" action="/notice/admin/write" method="POST" enctype="multipart/form-data">
         		<div class="w-50">
-        			<h1>게시물 작성</h1>
+        			<h1>공지사항 작성</h1>
         			<hr/>
 	        		<label>제목</label>
 	        		<input id="input_title" class="form-control form-control-lg" placeholder="제목을 작성해주세요." name="boardTitle">

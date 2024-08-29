@@ -22,12 +22,11 @@
         			<hr/>
         			<p>작성일 : <fmt:formatDate value="${board.boardDate}" type="date"/></p>
         			<p>작성자 : ${board.boardWriter}</p>
+        			<p>조회수 : ${board.hitCnt}</p>
         			<div class="row mt-5">
         				<div class="col-md-12 col-lg-6">
         					<label for="input_content">내용</label>
-        					<textarea id="input_content" class="form-control form-control-lg" name="boardContent" rows=15 readonly>
-        						${board.boardContent}
-        					</textarea>
+        					<textarea id="input_content" class="form-control form-control-lg" name="boardContent" rows=15 readonly>${board.boardContent}</textarea>
         				</div>
         				<div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center">
         					<c:if test="${board.imgName != null }">
@@ -37,16 +36,35 @@
         						<h4>첨부된 이미지파일이 없습니다.</h4>
         					</c:if>
         				</div>
-        				
         			</div>
         			<c:if test='${board.boardWriter == id}'>
         				<div class="d-flex justify-content-end pt-5">
-	        				<a class="btn btn-lg btn-primary me-3" href="/board/modify?boardNo=${board.boardNo}">수정</a>
-	        				<a class="btn btn-lg btn-danger" href="/board/delete?boardNo=${board.boardNo}&boardWriter=${board.boardWriter}">삭제</a>
+	        				<a class="btn btn-lg btn-primary me-3" href="/notice/admin/edit?boardNo=${board.boardNo}">수정</a>
+	        				<a class="btn btn-lg btn-danger" href="/notice/admin/delete?boardNo=${board.boardNo}">삭제</a>
 	        			</div>
         			</c:if>
         		</div>
         	</div>
         </section>
+        <c:if test="${prevBo != null || nextBo != null}">
+			<section
+				class="container-fluid mt-5 pt-5 d-flex justify-content-center">
+				<div id="move_post_container"
+					class="w-50 d-flex justify-content-between">
+					<div>
+						<c:if test="${prevBo != null}">
+							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${prevBo.boardNo}"> 이전 포스트<br>${prevBo.boardTitle}
+							</a>
+						</c:if>
+					</div>
+					<div>
+						<c:if test="${nextBo != null}">
+							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${nextBo.boardNo}"> 다음 포스트<br>${nextBo.boardTitle}
+							</a>
+						</c:if>
+					</div>
+				</div>
+			</section>
+		</c:if>
     </body>
 </html>

@@ -17,7 +17,7 @@
         <section class="container-fluid mb-5">
         	<div class="w-100 d-flex flex-column align-items-center">
         		<div class="w-100 d-flex justify-content-center my-5">
-        			<a class="btn btn-lg btn-primary w-25 me-2">
+        			<a class="btn btn-lg btn-primary w-25 me-2" href="/board/list">
         				자유게시판
         			</a>
         			<a class="btn btn-lg btn-secondary w-25 disabled">
@@ -28,43 +28,43 @@
         	</div>
         </section>
         <section class="container-fluid my-5">
-        	<form class="w-100 d-flex justify-content-center" action="/board/list" method="GET">
+        	<form class="w-100 d-flex justify-content-center" action="/notice/list" method="GET">
         		<div id="search_container" class="w-50 d-flex justify-content-end">
         			<select class="form-select form-select-sm" name="searchCtg">
-        				<option value="title" ${searchCtg == "title" ? "selected" : ""}>제목</option>
-        				<option value="content" ${searchCtg == "content" ? "selected" : ""}>내용</option>
+        				<option value="title" ${searchIndex.searchCtg == "title" ? "selected" : ""}>제목</option>
+        				<option value="content" ${searchIndex.searchCtg == "content" ? "selected" : ""}>내용</option>
         			</select>
         			<input class="form-control form-control-sm" type="text" name="keyword" value="${keyword}">
         			<button type="submit" class="btn btn-sm btn-primary">Search</button>
         		</div>
         	</form>
         </section>
-        <c:if test="${pager.totalRows < 1}">
+        <c:if test="${searchIndex.pager.totalRows < 1}">
 			<div class="container-fluid d-flex justify-content-center" style="height: 50vh;">
 				<h3>검색결과가 없습니다.</h3>
 			</div>        
         </c:if>
-        <c:if test="${pager.totalRows > 0}">
+        <c:if test="${searchIndex.pager.totalRows > 0}">
         <section style="min-height: 40vh">
         	<div id="list_container" class="container-fluid d-flex justify-content-center">
-        		<table class="table w-50">
-        			<thead>
+        		<table class="table table-bordered w-50">
+        			<thead class="table-danger">
         				<tr class="row">
-        					<th class="col-sm-2">글 번호</th>
-        					<th class="col-sm-4">제목</th>
-        					<th class="col-sm-2">작성자</th>
-        					<th class="col-sm-2">작성일</th>
-        					<th class="col-sm-2">조회수</th>
+        					<th class="col-sm-1 text-center">글 번호</th>
+        					<th class="col-sm-5 text-center">제목</th>
+        					<th class="col-sm-2 text-center">작성자</th>
+        					<th class="col-sm-2 text-center">작성일</th>
+        					<th class="col-sm-2 text-center">조회수</th>
         				</tr>
         			</thead>
         			<tbody>
-        				<c:forEach var="board" items="${boardList}">
+        				<c:forEach var="board" items="${noticeList}">
         					<tr class="row">
-	        					<th class="col-sm-2">${board.boardNo}</th>
-	        					<td class="col-sm-4" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/board/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
-	        					<td class="col-sm-2">${board.boardWriter}</td>
-	        					<td class="col-sm-2"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
-	        					<td class="col-sm-2">110</td>
+	        					<th class="col-sm-1 text-center border-right">${board.boardNo}</th>
+	        					<td class="col-sm-5 border-right" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/notice/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
+	        					<td class="col-sm-2 text-center border-right">${board.boardWriter}</td>
+	        					<td class="col-sm-2 text-center border-right"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
+	        					<td class="col-sm-2 text-center">${board.hitCnt}</td>
         					</tr>
         				</c:forEach>
         			</tbody>
@@ -76,21 +76,21 @@
         	<div id="write_button_container" class="container-fluid d-flex justify-content-center">
         		<div class="w-50 d-flex justify-content-end" style="min-height: 30px;">
         			<sec:authorize access="hasRole('ROLE_ADMIN')">
-        				<a class="btn btn-sm btn-primary" href="/board/write">글작성하기</a>
+        				<a class="btn btn-sm btn-primary" href="/notice/admin/form">글작성하기</a>
         			</sec:authorize>
         		</div>
         	</div>
         </section>
-        <c:if test="${pager.totalRows > 0}">
+        <c:if test="${searchIndex.pager.totalRows > 0}">
         <section>
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
 				  <ul class="pagination">
-				    <li class="page-item ${pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.startPageNo - 1}">Previous</a></li>
-				    <c:forEach var="pageNum" items="${pager.pageArray}">
-				    	<li class="page-item ${pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/board/list?pageNo=${pageNum}">${pageNum}</a></li>
+				    <li class="page-item ${searchIndex.pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.startPageNo - 1}">Previous</a></li>
+				    <c:forEach var="pageNum" items="${searchIndex.pager.pageArray}">
+				    	<li class="page-item ${searchIndex.pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/notice/list?pageNo=${pageNum}">${pageNum}</a></li>
 				    </c:forEach>
-				    <li class="page-item ${pager.groupNo == pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/board/list?pageNo=${pager.endPageNo + 1}">Next</a></li>
+				    <li class="page-item ${searchIndex.pager.groupNo == searchIndex.pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.endPageNo + 1}">Next</a></li>
 				  </ul>
 				</nav>
         	</div>

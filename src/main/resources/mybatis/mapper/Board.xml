@@ -8,7 +8,7 @@
 		join		(
 						select 	board_ref
 						from	board
-						where	board_depth = 0
+						where	board_depth = 0 and board_ctg = 1
 								<if test='keyword != null and !keyword.equals("")'>
 									<if test='searchCtg.equals("title")'>
 										and board_title like concat('%', #{keyword}, '%')
@@ -36,7 +36,7 @@
 		join		(
 						select	board_ref
 						from	board
-						where	board_depth = 0
+						where	board_depth = 0 and board_ctg = 1
 								<if test='keyword != null and !keyword.equals("")'>
 									<if test='searchCtg.equals("title")'>
 										and board_title like concat('%', #{keyword}, '%')
@@ -76,7 +76,7 @@
 							lead(board_no, 1, 9999) over(order by board_no) as prev_bo,
                     		lag(board_no, 1, 9999) over(order by board_no) as next_bo
                     from	board
-                    where	board_depth = 0
+                    where	board_depth = 0 and board_ctg = 1
                     order by board_no desc
 				) pninfo
 		join	(
