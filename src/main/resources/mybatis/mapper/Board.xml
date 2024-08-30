@@ -76,7 +76,7 @@
 							lead(board_no, 1, 9999) over(order by board_no) as prev_bo,
                     		lag(board_no, 1, 9999) over(order by board_no) as next_bo
                     from	board
-                    where	board_depth = 0 and board_ctg = 1
+                    where	board_depth = 0 and board_ctg = 1 and board_enabled = 1
                     		<if test='searchIndex.keyword != null and !searchIndex.keyword.equals("")'>
 									<if test='searchIndex.searchCtg.equals("title")'>
 										and board_title like concat('%', #{searchIndex.keyword}, '%')

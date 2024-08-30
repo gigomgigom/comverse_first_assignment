@@ -52,7 +52,7 @@
 					class="w-50 d-flex justify-content-between">
 					<div>
 						<c:if test="${prevBo != null}">
-							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${prevBo.boardNo}"> 이전 포스트<br>${prevBo.boardTitle}
+							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${prevBo.boardNo}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}&pageNo=${searchIndex.pageNo}"> 이전 포스트<br>${prevBo.boardTitle}
 							</a>
 						</c:if>
 					</div>
@@ -61,7 +61,7 @@
 					</div>
 					<div>
 						<c:if test="${nextBo != null}">
-							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${nextBo.boardNo}"> 다음 포스트<br>${nextBo.boardTitle}
+							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${nextBo.boardNo}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}&pageNo=${searchIndex.pageNo}"> 다음 포스트<br>${nextBo.boardTitle}
 							</a>
 						</c:if>
 					</div>
