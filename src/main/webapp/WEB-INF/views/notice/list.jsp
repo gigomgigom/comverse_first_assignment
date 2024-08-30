@@ -61,7 +61,7 @@
         				<c:forEach var="board" items="${noticeList}">
         					<tr class="row">
 	        					<th class="col-sm-1 text-center border-right">${board.boardNo}</th>
-	        					<td class="col-sm-5 border-right" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/notice/detail?boardNo=${board.boardNo}">${board.boardTitle}</a></td>
+	        					<td class="col-sm-5 border-right" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="/notice/detail?boardNo=${board.boardNo}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}&pageNo=${searchIndex.pageNo}">${board.boardTitle}</a></td>
 	        					<td class="col-sm-2 text-center border-right">${board.boardWriter}</td>
 	        					<td class="col-sm-2 text-center border-right"><fmt:formatDate value="${board.boardDate}" type="date"/></td>
 	        					<td class="col-sm-2 text-center">${board.hitCnt}</td>
@@ -86,11 +86,11 @@
         	<div id="pagination_container" class="container-fluid d-flex justify-content-center">
         		<nav>
 				  <ul class="pagination">
-				    <li class="page-item ${searchIndex.pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.startPageNo - 1}">Previous</a></li>
+				    <li class="page-item ${searchIndex.pager.groupNo == 1 ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.startPageNo - 1}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">Previous</a></li>
 				    <c:forEach var="pageNum" items="${searchIndex.pager.pageArray}">
-				    	<li class="page-item ${searchIndex.pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/notice/list?pageNo=${pageNum}">${pageNum}</a></li>
+				    	<li class="page-item ${searchIndex.pager.pageNo == pageNum ? 'active' : ''}"><a class="page-link" href="/notice/list?pageNo=${pageNum}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">${pageNum}</a></li>
 				    </c:forEach>
-				    <li class="page-item ${searchIndex.pager.groupNo == searchIndex.pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.endPageNo + 1}">Next</a></li>
+				    <li class="page-item ${searchIndex.pager.groupNo == searchIndex.pager.totalGroupNo ? 'disabled' : ''}"><a class="page-link" href="/notice/list?pageNo=${searchIndex.pager.endPageNo + 1}&searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}">Next</a></li>
 				  </ul>
 				</nav>
         	</div>

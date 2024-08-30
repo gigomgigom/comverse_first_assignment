@@ -22,7 +22,7 @@ public interface NoticeDao {
 	//공지사항 상세조회
 	public BoardDto selectNoticeByBno(int boardNo);
 	public void updateNoticeHitCnt(int boardNo);
-	public HashMap<String, Object> selectNoticePreNext(int boardNo);
+	public HashMap<String, Object> selectNoticePreNext(int boardNo, SearchIndex searchIndex);
 	//공지사항 수정
 	public void updateNotice(BoardDto board);
 	//공지사항 삭제

@@ -46,8 +46,7 @@
         		</div>
         	</div>
         </section>
-        <c:if test="${prevBo != null || nextBo != null}">
-			<section
+		<section
 				class="container-fluid mt-5 pt-5 d-flex justify-content-center">
 				<div id="move_post_container"
 					class="w-50 d-flex justify-content-between">
@@ -58,13 +57,15 @@
 						</c:if>
 					</div>
 					<div>
+						<a class="btn btn-lg btn-primary" href="/notice/list?searchCtg=${searchIndex.searchCtg}&keyword=${searchIndex.keyword}&pageNo=${searchIndex.pageNo}">목록</a>
+					</div>
+					<div>
 						<c:if test="${nextBo != null}">
 							<a class="btn btn-lg btn-primary" href="/notice/detail?boardNo=${nextBo.boardNo}"> 다음 포스트<br>${nextBo.boardTitle}
 							</a>
 						</c:if>
 					</div>
 				</div>
-			</section>
-		</c:if>
+		</section>
     </body>
 </html>

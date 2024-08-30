@@ -40,8 +40,10 @@ public class NoticeController {
 	}
 	//공지사항 상세보기 조회
 	@GetMapping("/detail")
-	public String noticeDetail(int boardNo, Model model, Authentication auth) {
-		String pageName = noticeService.getNoticeDetail(boardNo, model);
+	public String noticeDetail(int boardNo, String searchCtg, String keyword, String pageNo, Model model, Authentication auth) {
+		SearchIndex searchIndex = new SearchIndex(searchCtg, keyword, pageNo);
+		String pageName = noticeService.getNoticeDetail(boardNo, model, searchIndex);
+		model.addAttribute("searchIndex", searchIndex);
 		model.addAttribute("id", auth.getName());
 		return pageName;
 	}

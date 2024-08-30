@@ -35,7 +35,7 @@ public class NoticeService {
 	}
 	//공지사항 상세조회
 	@Transactional
-	public String getNoticeDetail(int boardNo, Model model) {
+	public String getNoticeDetail(int boardNo, Model model, SearchIndex searchIndex) {
 		BoardDto notice = noticeDao.selectNoticeByBno(boardNo);
 		if(notice == null) {
 			model.addAttribute("msg", "제목과 내용은 필수적인 내용입니다.");
@@ -43,7 +43,7 @@ public class NoticeService {
 			return "alert";
 		}
 		noticeDao.updateNoticeHitCnt(notice.getBoardNo());
-		HashMap<String, Object> result = noticeDao.selectNoticePreNext(notice.getBoardNo());
+		HashMap<String, Object> result = noticeDao.selectNoticePreNext(notice.getBoardNo(), searchIndex);
 		BoardDto prevBoard = noticeDao.selectNoticeByBno(Integer.parseInt(result.get("prev_bo").toString()));
 		BoardDto nextBoard = noticeDao.selectNoticeByBno(Integer.parseInt(result.get("next_bo").toString()));
 		

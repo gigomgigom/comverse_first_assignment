@@ -75,7 +75,7 @@ public class BoardController {
 				BoardDto parentBoard = boardService.getParentBoard(board.getBoardNo());
 				model.addAttribute("parentBoard", parentBoard);
 			}
-			HashMap<String, Object> boPrevNext = boardService.getPrevNextBoard(board.getBoardRef());
+			HashMap<String, Object> boPrevNext = boardService.getPrevNextBoard(board.getBoardRef(), searchIndex);
 			log.info(boPrevNext.toString());
 			model.addAttribute("prevBo", boPrevNext.get("prevBo"));
 			model.addAttribute("nextBo", boPrevNext.get("nextBo"));

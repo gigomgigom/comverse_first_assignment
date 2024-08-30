@@ -77,6 +77,17 @@
                     		lag(board_no, 1, 9999) over(order by board_no) as next_bo
                     from	board
                     where	board_depth = 0 and board_ctg = 1
+                    		<if test='searchIndex.keyword != null and !searchIndex.keyword.equals("")'>
+									<if test='searchIndex.searchCtg.equals("title")'>
+										and board_title like concat('%', #{searchIndex.keyword}, '%')
+									</if>
+									<if test='searchIndex.searchCtg.equals("content")'>
+										and board_content like concat('%', #{searchIndex.keyword}, '%')
+									</if>
+									<if test='searchIndex.searchCtg.equals("writer")'>
+										and board_writer like concat('%', #{searchIndex.keyword}, '%')
+									</if>
+							</if>
                     order by board_no desc
 				) pninfo
 		join	(

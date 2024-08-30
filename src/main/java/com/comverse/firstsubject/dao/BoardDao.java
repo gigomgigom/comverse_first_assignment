@@ -20,7 +20,7 @@ public interface BoardDao {
 	//게시글 상세 조회(게시글 정보 조회)
 	public BoardDto selectBoardByBoardNo(int boardNo);
 	//게시글 이전글, 다음글 찾기
-	public HashMap<String, Object> selectBoardPrevNext(int boardRef);
+	public HashMap<String, Object> selectBoardPrevNext(int boardRef, SearchIndex searchIndex);
 	//게시글 상세 조회(답글 목록 조회)
 	public List<BoardDto> selectReplyListByBoardNo(int boardNo);
 	//게시글 상세 조회(부모 게시글 조회)

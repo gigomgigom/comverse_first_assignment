@@ -104,8 +104,8 @@ public class BoardService {
 	}
 	
 	//전,후 게시판 찾기
-	public HashMap<String, Object> getPrevNextBoard(int boardRef) {
-		HashMap<String, Object> prevNext = boardDao.selectBoardPrevNext(boardRef);
+	public HashMap<String, Object> getPrevNextBoard(int boardRef, SearchIndex searchIndex) {
+		HashMap<String, Object> prevNext = boardDao.selectBoardPrevNext(boardRef, searchIndex);
 		BoardDto prevBo = boardDao.selectBoardByBoardNo(Integer.parseInt(prevNext.get("prev_bo").toString()));
 		BoardDto nextBo = boardDao.selectBoardByBoardNo(Integer.parseInt(prevNext.get("next_bo").toString()));
 		prevNext.put("prevBo", prevBo);
